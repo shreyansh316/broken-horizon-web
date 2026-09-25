@@ -8,6 +8,7 @@ interface NavbarProps {
   onNavigateToCharacters?: () => void;
   onNavigateToStory?: () => void;
   onNavigateToGarage?: () => void;
+  onNavigateToDevelopment?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -15,6 +16,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigateToWorld,
   onNavigateToCharacters,
   onNavigateToGarage,
+  onNavigateToDevelopment,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -67,6 +69,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'GARAGE', href: '/garage', sectionId: 'garage' },
     { label: 'OPERATIVES', href: '#characters', sectionId: 'characters' },
     { label: 'MEDIA', href: '#media', sectionId: 'media' },
+    { label: 'DEVELOPMENT', href: '/development', sectionId: 'development' },
   ];
 
   const handleLinkClick = (link: { label: string; href: string }) => {
@@ -82,6 +85,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
     if (link.label === 'GARAGE' && onNavigateToGarage) {
       onNavigateToGarage();
+      return;
+    }
+    if (link.label === 'DEVELOPMENT' && onNavigateToDevelopment) {
+      onNavigateToDevelopment();
       return;
     }
 

@@ -46,8 +46,28 @@ export const DistrictShape: React.FC<DistrictShapeProps> = ({
       <path
         d={region.mapPath}
         className="district-polygon-path"
-        fill={isSelected ? 'rgba(217, 119, 54, 0.22)' : isHovered ? 'rgba(217, 119, 54, 0.12)' : 'rgba(255, 255, 255, 0.025)'}
-        stroke={isSelected ? '#f4a460' : isHovered ? '#d97736' : 'rgba(255, 255, 255, 0.14)'}
+        fill={
+          isSelected
+            ? 'rgba(217, 119, 54, 0.22)'
+            : isHovered
+            ? 'rgba(217, 119, 54, 0.12)'
+            : region.discoveryState === 'LOCKED'
+            ? 'rgba(255, 255, 255, 0.01)'
+            : region.discoveryState === 'IN DEVELOPMENT'
+            ? 'rgba(0, 150, 255, 0.03)'
+            : 'rgba(217, 119, 54, 0.05)'
+        }
+        stroke={
+          isSelected
+            ? '#f4a460'
+            : isHovered
+            ? '#d97736'
+            : region.discoveryState === 'LOCKED'
+            ? 'rgba(255, 255, 255, 0.08)'
+            : region.discoveryState === 'IN DEVELOPMENT'
+            ? 'rgba(0, 150, 255, 0.3)'
+            : 'rgba(217, 119, 54, 0.3)'
+        }
         strokeWidth={isSelected ? '2.5' : isHovered ? '1.8' : '1'}
         strokeLinejoin="round"
         style={{
@@ -61,7 +81,15 @@ export const DistrictShape: React.FC<DistrictShapeProps> = ({
         cx={region.mapCoordinates.x}
         cy={region.mapCoordinates.y}
         r={isSelected ? 6 : isHovered ? 5 : 3.5}
-        fill={isSelected ? '#f4a460' : region.colorAccent}
+        fill={
+          isSelected
+            ? '#f4a460'
+            : region.discoveryState === 'LOCKED'
+            ? '#444'
+            : region.discoveryState === 'IN DEVELOPMENT'
+            ? '#0096ff'
+            : '#ff5500'
+        }
         stroke="#08090b"
         strokeWidth="1.5"
         style={{ transition: 'r 0.25s ease' }}
@@ -86,7 +114,17 @@ export const DistrictShape: React.FC<DistrictShapeProps> = ({
         y={region.mapCoordinates.y - 12}
         textAnchor="middle"
         className="district-svg-label"
-        fill={isSelected ? '#ffffff' : isHovered ? '#f4a460' : 'rgba(255, 255, 255, 0.7)'}
+        fill={
+          isSelected
+            ? '#ffffff'
+            : isHovered
+            ? '#f4a460'
+            : region.discoveryState === 'LOCKED'
+            ? 'rgba(255, 255, 255, 0.3)'
+            : region.discoveryState === 'IN DEVELOPMENT'
+            ? '#0096ff'
+            : '#ff5500'
+        }
         fontSize={isSelected ? '12' : '10'}
         fontWeight={isSelected ? '800' : '600'}
         letterSpacing="0.12em"

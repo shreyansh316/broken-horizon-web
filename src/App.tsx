@@ -20,6 +20,9 @@ import { StoryBoard } from './components/StoryBoard/StoryBoard';
 import { GarageExplorer } from './components/GarageExplorer/GarageExplorer';
 import { AdminPlaytestDashboard } from './components/Playtest/AdminPlaytestDashboard';
 import { PlaytestPortal } from './components/Playtest/PlaytestPortal';
+import { DevelopmentDashboard } from './components/Development/DevelopmentDashboard';
+import { PrivacyPolicy } from './components/Legal/PrivacyPolicy';
+import { TermsOfService } from './components/Legal/TermsOfService';
 import './styles/globals.css';
 import './styles/animations.css';
 
@@ -30,7 +33,7 @@ export function App() {
 
   // Routing State
   const [currentRoute, setCurrentRoute] = useState<
-    'home' | 'world' | 'characters' | 'story' | 'garage' | 'admin' | 'playtest'
+    'home' | 'world' | 'characters' | 'story' | 'garage' | 'admin' | 'playtest' | 'development' | 'privacy' | 'terms'
   >(() => {
     const path = window.location.pathname.toLowerCase();
     const hash = window.location.hash.toLowerCase();
@@ -41,6 +44,9 @@ export function App() {
     if (path.startsWith('/characters') || hash === '#/characters') return 'characters';
     if (path.startsWith('/story') || hash === '#/story') return 'story';
     if (path.startsWith('/garage') || hash === '#/garage' || hash === '#garage-lab') return 'garage';
+    if (path.startsWith('/development') || hash === '#/development' || hash === '#development') return 'development';
+    if (path.startsWith('/privacy') || hash === '#/privacy') return 'privacy';
+    if (path.startsWith('/terms') || hash === '#/terms') return 'terms';
     return 'home';
   });
 
@@ -79,6 +85,15 @@ export function App() {
       } else if (path.startsWith('/garage') || hash === '#/garage' || hash === '#garage-lab') {
         setCurrentRoute('garage');
         document.title = 'Broken Horizon — Mehta Garage Tuning Lab';
+      } else if (path.startsWith('/development') || hash === '#/development' || hash === '#development') {
+        setCurrentRoute('development');
+        document.title = 'Broken Horizon — Development Status';
+      } else if (path.startsWith('/privacy') || hash === '#/privacy') {
+        setCurrentRoute('privacy');
+        document.title = 'Broken Horizon — Privacy Policy';
+      } else if (path.startsWith('/terms') || hash === '#/terms') {
+        setCurrentRoute('terms');
+        document.title = 'Broken Horizon — Terms of Service';
       } else {
         setCurrentRoute('home');
         document.title = 'Broken Horizon — Official Website';
@@ -132,6 +147,13 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const navigateToDevelopment = () => {
+    setCurrentRoute('development');
+    window.history.pushState(null, '', '/development');
+    document.title = 'Broken Horizon — Development Status';
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
   return (
     <div className="broken-horizon-app">
       {/* Desktop Subtle Custom Cursor */}
@@ -168,6 +190,12 @@ export function App() {
           onBackToHome={navigateToHome}
           onNavigateToWorld={() => navigateToWorld('jaipur')}
         />
+      ) : currentRoute === 'development' ? (
+        <DevelopmentDashboard onBackToHome={navigateToHome} />
+      ) : currentRoute === 'privacy' ? (
+        <PrivacyPolicy onBackToHome={navigateToHome} />
+      ) : currentRoute === 'terms' ? (
+        <TermsOfService onBackToHome={navigateToHome} />
       ) : (
         <>
           {/* First 5-12s Cinematic Opening / Loading Experience */}
@@ -182,6 +210,7 @@ export function App() {
             onNavigateToCharacters={() => navigateToCharacters('arjun-mehta')}
             onNavigateToStory={navigateToStory}
             onNavigateToGarage={navigateToGarage}
+            onNavigateToDevelopment={navigateToDevelopment}
           />
 
           {/* Main Continuous Cinematic Homepage */}

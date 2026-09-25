@@ -58,8 +58,8 @@ export const FooterSection: React.FC<FooterSectionProps> = () => {
               <li><a href="https://samwooduis.itch.io/broken-horizon" target="_blank" rel="noopener noreferrer">Official Itch.io Hub ↗</a></li>
               <li><a href="#access">Closed Beta Dispatch</a></li>
               <li><a href="#access">Press Kit Inquiries</a></li>
-              <li><a href="#hero">Privacy Policy</a></li>
-              <li><a href="#hero">Terms of Service</a></li>
+              <li><a href="#/privacy">Privacy Policy</a></li>
+              <li><a href="#/terms">Terms of Service</a></li>
             </ul>
           </div>
         </div>

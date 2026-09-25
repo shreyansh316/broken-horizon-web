@@ -1,4 +1,4 @@
-export type DiscoveryStatus = 'Available' | 'Discovered' | 'Featured' | 'Locked';
+export type DiscoveryStatus = 'PLAYABLE' | 'IN DEVELOPMENT' | 'LOCKED';
 
 export interface MapLandmark {
   id: string;
@@ -124,7 +124,7 @@ export const worldRegions: WorldRegion[] = [
       "Central Secretariat Gate"
     ],
     travelTime: "Starting Point",
-    discoveryState: "Available",
+    discoveryState: "PLAYABLE",
     featured: true,
     image: "/assets/images/world/world-jaipur.jpg",
     gallery: [
@@ -180,7 +180,7 @@ export const worldRegions: WorldRegion[] = [
     ],
     storyLocations: ["Dausa Freight Weigh Station", "Stepwell Vault"],
     travelTime: "45 mins via NH-21",
-    discoveryState: "Discovered",
+    discoveryState: "LOCKED",
     featured: false,
     image: "/assets/images/world/world-dausa.jpg",
     gallery: [
@@ -231,7 +231,7 @@ export const worldRegions: WorldRegion[] = [
     ],
     storyLocations: ["Ravine Crossing Trestle", "Lodge Compound"],
     travelTime: "1 hr 15 mins via MDR-111",
-    discoveryState: "Discovered",
+    discoveryState: "LOCKED",
     featured: false,
     image: "/assets/images/hero/hero-desert-road.jpg",
     gallery: [
@@ -282,7 +282,7 @@ export const worldRegions: WorldRegion[] = [
     ],
     storyLocations: ["Chambal Sluice Complex", "Substation 04"],
     travelTime: "1 hr 40 mins via NH-52",
-    discoveryState: "Discovered",
+    discoveryState: "LOCKED",
     featured: false,
     image: "/assets/images/screenshots/screenshot-04.jpg",
     gallery: [
@@ -332,7 +332,7 @@ export const worldRegions: WorldRegion[] = [
     ],
     storyLocations: ["Taragarh Spire", "Blue Quarter Safehouse"],
     travelTime: "50 mins from Kota",
-    discoveryState: "Discovered",
+    discoveryState: "LOCKED",
     featured: false,
     image: "/assets/images/screenshots/screenshot-06.jpg",
     gallery: [
@@ -382,7 +382,7 @@ export const worldRegions: WorldRegion[] = [
     ],
     storyLocations: ["Taragarh Pass Gate", "Ana Sagar Causeway"],
     travelTime: "1 hr 10 mins from Jaipur",
-    discoveryState: "Available",
+    discoveryState: "LOCKED",
     featured: true,
     image: "/assets/images/screenshots/screenshot-01.jpg",
     gallery: [
@@ -432,7 +432,7 @@ export const worldRegions: WorldRegion[] = [
     ],
     storyLocations: ["Highway Strip Aerodrome", "Mill Complex 07"],
     travelTime: "55 mins from Ajmer",
-    discoveryState: "Discovered",
+    discoveryState: "LOCKED",
     featured: false,
     image: "/assets/images/hero/hero-desert-road.jpg",
     gallery: [
@@ -492,7 +492,7 @@ export const worldRegions: WorldRegion[] = [
     ],
     storyLocations: ["Western Freight Terminal", "Red Citadel Vault"],
     travelTime: "1 hr 30 mins from Pali",
-    discoveryState: "Available",
+    discoveryState: "IN DEVELOPMENT",
     featured: true,
     image: "/assets/images/world/world-jodhpur.jpg",
     gallery: [
@@ -553,7 +553,7 @@ export const worldRegions: WorldRegion[] = [
     ],
     storyLocations: ["Desert Relay Station 09", "Golden Gate Citadel"],
     travelTime: "2 hrs 45 mins from Jodhpur",
-    discoveryState: "Available",
+    discoveryState: "LOCKED",
     featured: true,
     image: "/assets/images/world/world-jaisalmer.jpg",
     gallery: [
@@ -604,7 +604,7 @@ export const worldRegions: WorldRegion[] = [
     ],
     storyLocations: ["Horizon Pumping Station 02", "Border Sector 14"],
     travelTime: "2 hrs from Jaisalmer",
-    discoveryState: "Discovered",
+    discoveryState: "LOCKED",
     featured: false,
     image: "/assets/images/screenshots/screenshot-02.jpg",
     gallery: [
@@ -665,7 +665,7 @@ export const worldRegions: WorldRegion[] = [
     ],
     storyLocations: ["Rathore Press Bureau", "Pichola Island Palace"],
     travelTime: "2 hrs from Ajmer",
-    discoveryState: "Available",
+    discoveryState: "IN DEVELOPMENT",
     featured: true,
     image: "/assets/images/screenshots/screenshot-03.jpg",
     gallery: [
@@ -719,7 +719,7 @@ export const worldRegions: WorldRegion[] = [
     ],
     storyLocations: ["Great Marble Pit", "Kumbhalgarh Gateway"],
     travelTime: "40 mins from Udaipur",
-    discoveryState: "Discovered",
+    discoveryState: "LOCKED",
     featured: false,
     image: "/assets/images/screenshots/screenshot-04.jpg",
     gallery: [
@@ -769,7 +769,7 @@ export const worldRegions: WorldRegion[] = [
     ],
     storyLocations: ["Grand Fresco Haveli", "Northern Freight Depot"],
     travelTime: "1 hr 15 mins north of Jaipur",
-    discoveryState: "Discovered",
+    discoveryState: "LOCKED",
     featured: false,
     image: "/assets/images/screenshots/screenshot-06.jpg",
     gallery: [

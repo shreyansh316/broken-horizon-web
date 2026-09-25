@@ -39,7 +39,9 @@ When the privatized **Horizon Corridor** transit infrastructure project begins s
 * **Dual Operative Dossiers:** Instant dossier switching between Arjun Mehta and Kavya Rathore with simulated field telemetry audio intercept.
 * **Interactive Mehta Garage Tuning Lab:** 2.5D canvas vehicle schematic, real-time tire pressure and suspension geometry dyno, and procedural Web Audio engine ignition/throttle acoustics.
 * **High-Fidelity 16:9 Media Lightbox:** Curated visual concept studies and in-engine pre-alpha renders with fullscreen inspector.
-* **Direct Closed Playtest Registry:** Seamless sign-up interface for upcoming community telemetry passes.
+* **End-to-End Playtest Portal:** Secure sign-up integration using Google Apps Script webhook, including automated clearance emails, a protected admin dashboard, and simulated encrypted dispatch UI.
+* **Development Status Dashboard:** Honest project tracking interface providing real-time production visibility for the Jaipur playable slice and future districts (no fake percentages).
+* **Robust Production Routing:** Dedicated `/privacy` and `/terms` legal pages integrated directly into the custom hash router.
 
 ---
 
