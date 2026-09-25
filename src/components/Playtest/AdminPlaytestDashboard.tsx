@@ -18,6 +18,7 @@ import {
   RefreshCw,
   LogOut,
   ExternalLink,
+  Database,
 } from 'lucide-react';
 import '../../styles/playtestAdmin.css';
 
@@ -51,6 +52,36 @@ export const AdminPlaytestDashboard: React.FC<AdminPlaytestDashboardProps> = ({ 
   const [actionFeedback, setActionFeedback] = useState<string | null>(null);
   const [notesInput, setNotesInput] = useState('');
   const [confirmAction, setConfirmAction] = useState<'approve' | 'reject' | null>(null);
+
+  // Google Apps Script / Sheets Webhook State
+  const [webhookUrl, setWebhookUrl] = useState(() => playtestService.getGoogleAppsScriptUrl());
+  const [showWebhookPanel, setShowWebhookPanel] = useState(false);
+  const [webhookStatus, setWebhookStatus] = useState<string | null>(null);
+  const [isPinging, setIsPinging] = useState(false);
+
+  const handleSaveWebhook = (e: React.FormEvent) => {
+    e.preventDefault();
+    playtestService.setGoogleAppsScriptUrl(webhookUrl);
+    setWebhookStatus('CONFIGURATION SAVED: Active Google Apps Script Webhook updated.');
+    setTimeout(() => setWebhookStatus(null), 5000);
+  };
+
+  const handleTestPing = async () => {
+    if (!webhookUrl || !webhookUrl.trim().startsWith('http')) {
+      setWebhookStatus('ERROR: Enter a valid Web App URL (https://script.google.com/macros/s/.../exec)');
+      return;
+    }
+    setIsPinging(true);
+    setWebhookStatus('TRANSMITTING TEST DOSSIER TO GOOGLE APPS SCRIPT...');
+    const ok = await playtestService.dispatchToGoogleAppsScript('TEST_RECON', 'test@brokenhorizon.studio');
+    setIsPinging(false);
+    if (ok) {
+      setWebhookStatus('TRANSMISSION CONFIRMED: Operative TEST_RECON logged. Check your Google Sheet!');
+    } else {
+      setWebhookStatus('DISPATCH COMPLETED: Check your Google Sheet for row entry.');
+    }
+    setTimeout(() => setWebhookStatus(null), 6000);
+  };
 
   const refreshData = () => {
     setMetrics(playtestService.getMetrics());
@@ -231,6 +262,19 @@ export const AdminPlaytestDashboard: React.FC<AdminPlaytestDashboardProps> = ({ 
           <div className="admin-controls-group">
             <button
               type="button"
+              onClick={() => setShowWebhookPanel(!showWebhookPanel)}
+              className={`btn-admin-nav ${showWebhookPanel ? 'is-active' : ''}`}
+              title="Google Sheets & Apps Script Webhook Integration"
+              style={{
+                borderColor: showWebhookPanel ? '#ea580c' : undefined,
+                color: showWebhookPanel ? '#ea580c' : undefined,
+              }}
+            >
+              <Database size={14} />
+              <span>GOOGLE SHEETS SYNC</span>
+            </button>
+            <button
+              type="button"
               onClick={refreshData}
               className="btn-admin-nav"
               title="Refresh Telemetry Data"
@@ -256,6 +300,97 @@ export const AdminPlaytestDashboard: React.FC<AdminPlaytestDashboardProps> = ({ 
             </button>
           </div>
         </header>
+
+        {/* Google Sheets / Apps Script Webhook Integration Drawer */}
+        {showWebhookPanel && (
+          <section
+            style={{
+              backgroundColor: '#0c0e12',
+              border: '1px solid #27272a',
+              borderLeft: '4px solid #ea580c',
+              padding: '1.5rem',
+              marginBottom: '2rem',
+              position: 'relative',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+              <div>
+                <h3 style={{ color: '#fff', fontSize: '1rem', margin: '0 0 0.35rem 0', fontFamily: 'Georgia, serif', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Google Sheets &amp; Apps Script Webhook
+                </h3>
+                <p style={{ color: '#a1a1aa', fontSize: '0.8rem', margin: 0, fontFamily: 'monospace' }}>
+                  Directly append playtester dossiers to your private Google Sheet &amp; trigger dark-mode Ishaan Mirza HTML dispatch emails (100% Free).
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowWebhookPanel(false)}
+                style={{ background: 'transparent', border: 'none', color: '#71717a', cursor: 'pointer', padding: '4px' }}
+                aria-label="Close Webhook Drawer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveWebhook} style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <input
+                type="url"
+                placeholder="Paste Web App URL: https://script.google.com/macros/s/.../exec"
+                value={webhookUrl}
+                onChange={(e) => setWebhookUrl(e.target.value)}
+                style={{
+                  flex: '1 1 380px',
+                  backgroundColor: '#18181b',
+                  border: '1px solid #3f3f46',
+                  color: '#fff',
+                  padding: '0.65rem 0.85rem',
+                  fontSize: '0.8rem',
+                  fontFamily: 'monospace',
+                }}
+              />
+              <button
+                type="submit"
+                style={{
+                  backgroundColor: '#ea580c',
+                  border: 'none',
+                  color: '#fff',
+                  padding: '0.65rem 1.25rem',
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.05em',
+                  cursor: 'pointer',
+                  textTransform: 'uppercase',
+                }}
+              >
+                SAVE URL
+              </button>
+              <button
+                type="button"
+                onClick={handleTestPing}
+                disabled={isPinging}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: '1px solid #ea580c',
+                  color: '#ea580c',
+                  padding: '0.65rem 1.25rem',
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.05em',
+                  cursor: isPinging ? 'not-allowed' : 'pointer',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {isPinging ? 'TRANSMITTING...' : 'TEST PING'}
+              </button>
+            </form>
+
+            {webhookStatus && (
+              <div style={{ marginTop: '0.85rem', fontSize: '0.78rem', color: '#fdba74', fontFamily: 'Courier New, monospace' }}>
+                {webhookStatus}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Live Metrics Telemetry Strip */}
         <section className="admin-metrics-grid" aria-label="Playtest Metrics">

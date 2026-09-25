@@ -20,6 +20,7 @@ export interface SiteConfig {
   youtubeUrl: string;
   twitterUrl: string;
   instagramUrl: string;
+  googleAppsScriptUrl: string;
 }
 
 export const siteConfig: SiteConfig = {
@@ -42,5 +43,6 @@ export const siteConfig: SiteConfig = {
   youtubeUrl: "#",
   twitterUrl: "#",
   instagramUrl: "#",
+  googleAppsScriptUrl: import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || "",
 };
 

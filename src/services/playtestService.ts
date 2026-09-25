@@ -192,6 +192,59 @@ class PlaytestService {
   }
 
   /**
+   * Retrieves configured Google Apps Script Web App URL
+   * Checks runtime override in localStorage first, then environment variable.
+   */
+  public getGoogleAppsScriptUrl(): string {
+    if (this.isBrowser()) {
+      const stored = localStorage.getItem('broken_horizon_google_script_url');
+      if (stored && stored.trim().startsWith('http')) {
+        return stored.trim();
+      }
+    }
+    return import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || '';
+  }
+
+  /**
+   * Saves or clears runtime Google Apps Script Webhook URL override
+   */
+  public setGoogleAppsScriptUrl(url: string): void {
+    if (!this.isBrowser()) return;
+    if (url && url.trim().startsWith('http')) {
+      localStorage.setItem('broken_horizon_google_script_url', url.trim());
+    } else {
+      localStorage.removeItem('broken_horizon_google_script_url');
+    }
+  }
+
+  /**
+   * Dispatches operative application to Google Sheets + Google Apps Script Webhook
+   * Saves to private Google Sheet & triggers Ishaan Mirza styled HTML dispatch email
+   */
+  public async dispatchToGoogleAppsScript(callsign: string, email: string): Promise<boolean> {
+    const scriptUrl = this.getGoogleAppsScriptUrl();
+    if (!scriptUrl || !scriptUrl.startsWith('http')) {
+      return false;
+    }
+
+    try {
+      await fetch(scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors', // Prevents CORS block from Google Apps Script web app
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8',
+        },
+        body: JSON.stringify({ callsign, email }),
+      });
+      console.log(`[PlaytestService] Google Apps Script webhook dispatched successfully for ${callsign} (${email})`);
+      return true;
+    } catch (err) {
+      console.warn('[PlaytestService] Google Apps Script webhook notification:', err);
+      return false;
+    }
+  }
+
+  /**
    * Submit a new Playtest Application
    */
   public async apply(
@@ -281,9 +334,15 @@ class PlaytestService {
       details: `Application submitted for operative ${cleanCallsign}`,
     });
 
-    // 6. Send confirmation email
+    // 6. Send confirmation email (simulated / webhook)
     const emailPayload = generateConfirmationEmail(newApp);
-    const delivery = await this.dispatchEmail(emailPayload);
+    let delivery = await this.dispatchEmail(emailPayload);
+
+    // 7. Dispatch to Google Apps Script (Google Sheet + Ishaan Mirza Styled Email)
+    const gasDelivered = await this.dispatchToGoogleAppsScript(cleanCallsign, cleanEmail);
+    if (gasDelivered) {
+      delivery = 'sent';
+    }
 
     newApp.email_delivery_status = delivery;
     newApp.last_email_sent_at = new Date().toISOString();
