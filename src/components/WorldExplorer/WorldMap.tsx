@@ -25,6 +25,7 @@ interface WorldMapProps {
     from: { x: number; y: number; name: string };
     to: { x: number; y: number; name: string };
   } | null;
+  visibleDistrictIds?: string[];
 }
 
 const DEFAULT_VIEW = { x: 0, y: 0, width: 1200, height: 900 };
@@ -42,6 +43,7 @@ export const WorldMap: React.FC<WorldMapProps> = ({
   isWeatherRadar = false,
   isFactionOverlay = false,
   gpsRoute = null,
+  visibleDistrictIds = [],
 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -281,6 +283,7 @@ export const WorldMap: React.FC<WorldMapProps> = ({
           onSelectDistrict={onSelectDistrict}
           onHoverDistrict={onHoverDistrict}
           filter={filter}
+          visibleDistrictIds={visibleDistrictIds}
         />
 
         {/* Layer 4.5: Dynamic Live Weather & Hazard Radar Layer */}

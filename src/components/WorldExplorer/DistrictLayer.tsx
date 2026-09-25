@@ -8,6 +8,7 @@ interface DistrictLayerProps {
   onSelectDistrict: (region: WorldRegion) => void;
   onHoverDistrict: (region: WorldRegion | null) => void;
   filter: string;
+  visibleDistrictIds: string[];
 }
 
 export const DistrictLayer: React.FC<DistrictLayerProps> = ({
@@ -16,8 +17,8 @@ export const DistrictLayer: React.FC<DistrictLayerProps> = ({
   onSelectDistrict,
   onHoverDistrict,
   filter,
+  visibleDistrictIds,
 }) => {
-  // If filter is specific to other layers (e.g. only landmarks), we can dim districts slightly
   const isDimmed = filter !== 'ALL' && filter !== 'DISTRICTS';
 
   return (
@@ -25,16 +26,22 @@ export const DistrictLayer: React.FC<DistrictLayerProps> = ({
       className={`district-layer-group ${isDimmed ? 'layer-dimmed' : ''}`}
       style={{ opacity: isDimmed ? 0.45 : 1, transition: 'opacity 0.3s ease' }}
     >
-      {worldRegions.map((region) => (
-        <DistrictShape
-          key={region.id}
-          region={region}
-          isSelected={selectedDistrict?.id === region.id}
-          isHovered={hoveredDistrict?.id === region.id}
-          onSelect={onSelectDistrict}
-          onHover={onHoverDistrict}
-        />
-      ))}
+      {worldRegions.map((region) => {
+        const isVisible = visibleDistrictIds.includes(region.id);
+        if (!isVisible) return null;
+        
+        return (
+          <DistrictShape
+            key={region.id}
+            region={region}
+            isSelected={selectedDistrict?.id === region.id}
+            isHovered={hoveredDistrict?.id === region.id}
+            onSelect={onSelectDistrict}
+            onHover={onHoverDistrict}
+          />
+        );
+      })}
     </g>
   );
 };
+

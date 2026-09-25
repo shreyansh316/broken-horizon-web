@@ -1,6 +1,7 @@
-import React from 'react';
-import { ArrowLeft, MapPin, Activity, Camera } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, MapPin, Activity, Camera, Layers, Navigation2, Gamepad2, Image as ImageIcon } from 'lucide-react';
 import type { WorldRegion } from '../../data/worldData';
+import { Lightbox } from './Lightbox';
 
 interface MapTransitionProps {
   district: WorldRegion | null;
@@ -13,7 +14,15 @@ export const MapTransition: React.FC<MapTransitionProps> = ({
   isOpen,
   onBack,
 }) => {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
   if (!isOpen || !district) return null;
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
 
   return (
     <div
@@ -79,12 +88,59 @@ export const MapTransition: React.FC<MapTransitionProps> = ({
               </div>
             )}
 
+            {/* Gallery Section */}
+            <div className="deep-dive-gallery-section">
+              <h4 className="locations-heading">
+                <ImageIcon size={14} className="heading-icon" />
+                ENVIRONMENTAL INTEL
+              </h4>
+              {district.gallery && district.gallery.length > 0 ? (
+                <div className="gallery-grid">
+                  {/* Large Feature Image */}
+                  <div 
+                    className="gallery-feature-item" 
+                    onClick={() => openLightbox(0)}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <img src={district.gallery[0].url} alt={district.gallery[0].title} />
+                    <div className="gallery-item-overlay">
+                      <span className="gallery-item-title">{district.gallery[0].title}</span>
+                      <span className="gallery-item-type">{district.gallery[0].type}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Smaller Images */}
+                  <div className="gallery-thumbnails">
+                    {district.gallery.slice(1).map((img, idx) => (
+                      <div 
+                        key={idx + 1} 
+                        className="gallery-thumb-item"
+                        onClick={() => openLightbox(idx + 1)}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <img src={img.url} alt={img.title} />
+                        <div className="gallery-item-overlay-small">
+                          <span className="gallery-item-title-small">{img.title}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p className="no-intel-text">No environmental intel available for this sector.</p>
+              )}
+            </div>
+
             <div className="deep-dive-locations-section">
-              <h4 className="locations-heading">NOTABLE SECTORS & WAYPOINTS</h4>
+              <h4 className="locations-heading">
+                <MapPin size={14} className="heading-icon" />
+                NOTABLE SECTORS & WAYPOINTS
+              </h4>
               <div className="locations-grid">
                 {district.majorLocations.map((loc) => (
                   <div key={loc} className="location-item-box">
-                    <MapPin size={14} className="location-pin" />
                     <span>{loc}</span>
                   </div>
                 ))}
@@ -110,21 +166,59 @@ export const MapTransition: React.FC<MapTransitionProps> = ({
                 <span className="spec-value">{district.climate}</span>
               </div>
               <div className="spec-row">
-                <span className="spec-key">EST. TRANSIT</span>
-                <span className="spec-value">{district.travelTime}</span>
-              </div>
-              <div className="spec-row">
                 <span className="spec-key">DISCOVERY STATE</span>
                 <span className="spec-value text-amber">{district.discoveryState}</span>
               </div>
             </div>
 
             <div className="deep-dive-activities-box">
-              <h4 className="activities-heading">AVAILABLE MISSIONS & ACTIVITIES</h4>
+              <h4 className="activities-heading">
+                <Layers size={14} className="heading-icon" />
+                LOCATION TYPES
+              </h4>
+              <div className="tags-flex">
+                {district.locationCategories?.map((cat) => (
+                  <span key={cat} className="category-tag">{cat}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="deep-dive-activities-box">
+              <h4 className="activities-heading">
+                <Navigation2 size={14} className="heading-icon" />
+                TRANSPORTATION
+              </h4>
+              <div className="transport-list">
+                {district.transportation?.map((trans) => (
+                  <div key={trans.category} className="transport-row">
+                    <span className="transport-category">{trans.category}:</span>
+                    <span className="transport-options">{trans.options.join(', ')}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="deep-dive-activities-box">
+              <h4 className="activities-heading">
+                <Gamepad2 size={14} className="heading-icon" />
+                GAMEPLAY TYPES
+              </h4>
+              <div className="tags-flex">
+                {district.gameplayTypes?.map((gt) => (
+                  <span key={gt} className="gameplay-tag">{gt}</span>
+                ))}
+              </div>
+            </div>
+            
+            <div className="deep-dive-activities-box">
+              <h4 className="activities-heading">
+                <Activity size={14} className="heading-icon" />
+                WORLD ACTIVITIES
+              </h4>
               <ul className="activities-list">
                 {district.activities.map((act) => (
                   <li key={act} className="activity-item">
-                    <Activity size={12} className="act-bullet" />
+                    <div className="act-bullet" />
                     <span>{act}</span>
                   </li>
                 ))}
@@ -133,6 +227,16 @@ export const MapTransition: React.FC<MapTransitionProps> = ({
           </div>
         </div>
       </div>
+
+      <Lightbox 
+        images={district.gallery || []} 
+        currentIndex={lightboxIndex} 
+        districtName={district.name}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        onNavigate={setLightboxIndex}
+      />
     </div>
   );
 };
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ArrowLeft, Volume2, VolumeX } from 'lucide-react';
 import { worldRegions, type WorldRegion, type MapLandmark } from '../../data/worldData';
 import { WorldMap } from './WorldMap';
@@ -6,7 +6,7 @@ import { WorldIntro } from './WorldIntro';
 import { DistrictPanel } from './DistrictPanel';
 import { DistrictList } from './DistrictList';
 import { WorldSearch } from './WorldSearch';
-import { WorldFilters, type MapFilterType } from './WorldFilters';
+import { WorldFilters, type MapFilterType, type DistrictCategoryFilter, type DistrictStatusFilter } from './WorldFilters';
 import { JourneyTimeline } from './JourneyTimeline';
 import { MapControls } from './MapControls';
 import { MapLegend } from './MapLegend';
@@ -29,6 +29,8 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
   const [hoveredDistrict, setHoveredDistrict] = useState<WorldRegion | null>(null);
   const [selectedLandmark, setSelectedLandmark] = useState<MapLandmark | null>(null);
   const [filter, setFilter] = useState<MapFilterType>('ALL');
+  const [categoryFilter, setCategoryFilter] = useState<DistrictCategoryFilter>('ALL');
+  const [statusFilter, setStatusFilter] = useState<DistrictStatusFilter>('ALL');
   const [focusTarget, setFocusTarget] = useState<{ x: number; y: number } | null>(null);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -115,6 +117,18 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
     setIsAudioEnabled(next);
     localStorage.setItem('bh_audio_enabled', String(next));
   };
+  
+  const filteredDistricts = useMemo(() => {
+    return worldRegions.filter((r) => {
+      if (statusFilter !== 'ALL' && statusFilter === 'ACTIVE' && r.discoveryState !== 'PLAYABLE') return false;
+      if (statusFilter !== 'ALL' && statusFilter === 'FUTURE' && r.discoveryState === 'PLAYABLE') return false;
+      
+      if (categoryFilter !== 'ALL') {
+        if (!r.locationCategories.includes(categoryFilter)) return false;
+      }
+      return true;
+    });
+  }, [categoryFilter, statusFilter]);
 
   return (
     <div className="world-explorer-root" role="main" aria-label="Broken Horizon World Explorer">
@@ -173,8 +187,13 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
         <WorldFilters
           activeFilter={filter}
           onChangeFilter={(f) => setFilter(f)}
+          activeCategory={categoryFilter}
+          onChangeCategory={(f) => setCategoryFilter(f)}
+          activeStatus={statusFilter}
+          onChangeStatus={(f) => setStatusFilter(f)}
         />
         <DistrictList
+          districts={filteredDistricts}
           selectedDistrict={selectedDistrict}
           onSelectDistrict={handleSelectDistrict}
           isOpen={isDrawerOpen}
@@ -201,6 +220,7 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
         isWeatherRadar={isWeatherRadar}
         isFactionOverlay={isFactionOverlay}
         gpsRoute={gpsRoute}
+        visibleDistrictIds={filteredDistricts.map(d => d.id)}
       />
 
       {/* District Briefing Side Panel / Bottom Sheet */}

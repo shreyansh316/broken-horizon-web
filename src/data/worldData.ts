@@ -1,5 +1,11 @@
 export type DiscoveryStatus = 'PLAYABLE' | 'IN DEVELOPMENT' | 'LOCKED';
 
+export interface Screenshot {
+  url: string;
+  title: string;
+  type: string;
+}
+
 export interface MapLandmark {
   id: string;
   name: string;
@@ -22,6 +28,11 @@ export interface MapRoute {
   description: string;
 }
 
+export interface TransportationInfo {
+  category: string;
+  options: string[];
+}
+
 export interface WorldRegion {
   id: string;
   index: string;
@@ -30,16 +41,19 @@ export interface WorldRegion {
   region: string;
   shortDescription: string;
   fullDescription: string;
-  description: string; // for backward compatibility
+  description: string;
   biome: string;
-  coordinates: string; // in-game grid coordinate
+  coordinates: string;
   mapCoordinates: { x: number; y: number };
-  mapPath: string; // SVG path string
+  mapPath: string;
   colorAccent: string;
   populationStyle: string;
   terrain: string;
   climate: string;
   majorLocations: string[];
+  locationCategories: string[];
+  transportation: TransportationInfo[];
+  gameplayTypes: string[];
   landmarks: MapLandmark[];
   activities: string[];
   storyLocations: string[];
@@ -47,7 +61,7 @@ export interface WorldRegion {
   discoveryState: DiscoveryStatus;
   featured: boolean;
   image: string;
-  gallery: string[];
+  gallery: Screenshot[];
   quote: string;
   characterAffiliation?: {
     name: 'Arjun Mehta' | 'Kavya Rathore';
@@ -126,11 +140,18 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "Starting Point",
     discoveryState: "PLAYABLE",
     featured: true,
-    image: "/assets/images/world/world-jaipur.jpg",
+    image: "/assets/images/gameplay/BH_Jaipur_PinkCityMarket_01.jpg",
+locationCategories: ["URBAN", "TRANSPORT", "HERITAGE"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles", "Buses", "Trucks"] },
+      { category: "Rail", options: ["Railway"] }
+    ],
+    gameplayTypes: ["DRIVING", "EXPLORATION", "PHOTOGRAPHY"],
     gallery: [
-      "/assets/images/world/world-jaipur.jpg",
-      "/assets/images/screenshots/screenshot-01.jpg",
-      "/assets/images/hero/hero-jaipur-road.jpg"
+      { url: "/assets/images/gameplay/BH_Jaipur_PinkCityMarket_01.jpg", title: "Pink City Market", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Jaipur_RingRoad_02.jpg", title: "Ring Road", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Jaipur_HaveliInvestigation_03.jpg", title: "Haveli Investigation", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Jaipur_TransportYard_04.jpg", title: "Transport Yard", type: "Gameplay Environment" }
     ],
     quote: "Every road in Jaipur starts with an engine and ends with a question.",
     characterAffiliation: {
@@ -182,10 +203,16 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "45 mins via NH-21",
     discoveryState: "LOCKED",
     featured: false,
-    image: "/assets/images/world/world-dausa.jpg",
+    image: "/assets/images/gameplay/BH_Dausa_RuralHighway_01.jpg",
+locationCategories: ["TRANSPORT", "HERITAGE", "NATURE"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles", "Buses", "Trucks"] },
+      { category: "Rail", options: ["Railway"] }
+    ],
+    gameplayTypes: ["DRIVING", "EXPLORATION", "EVIDENCE COLLECTION"],
     gallery: [
-      "/assets/images/world/world-dausa.jpg",
-      "/assets/images/screenshots/screenshot-05.jpg"
+      { url: "/assets/images/gameplay/BH_Dausa_RuralHighway_01.jpg", title: "Rural Highway", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Dausa_FortApproach_02.jpg", title: "Fort Approach", type: "Gameplay Environment" }
     ],
     quote: "If you want something buried deep, bring it to Dausa."
   },
@@ -233,10 +260,16 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "1 hr 15 mins via MDR-111",
     discoveryState: "LOCKED",
     featured: false,
-    image: "/assets/images/hero/hero-desert-road.jpg",
+    image: "/assets/images/gameplay/BH_SawaiMadhopur_ForestRoad_01.jpg",
+locationCategories: ["NATURE", "HERITAGE", "SECURITY"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles", "Buses", "Trucks"] },
+      { category: "Rail", options: ["Railway"] }
+    ],
+    gameplayTypes: ["OFF-ROAD", "STEALTH", "PHOTOGRAPHY"],
     gallery: [
-      "/assets/images/hero/hero-desert-road.jpg",
-      "/assets/images/screenshots/screenshot-04.jpg"
+      { url: "/assets/images/gameplay/BH_SawaiMadhopur_ForestRoad_01.jpg", title: "Forest Road", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_SawaiMadhopur_NightCheckpoint_02.jpg", title: "Night Checkpoint", type: "Gameplay Environment" }
     ],
     quote: "The road ends where the jungle remembers its old teeth."
   },
@@ -284,9 +317,16 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "1 hr 40 mins via NH-52",
     discoveryState: "LOCKED",
     featured: false,
-    image: "/assets/images/screenshots/screenshot-04.jpg",
+    image: "/assets/images/gameplay/BH_Kota_UrbanRoad_01.jpg",
+locationCategories: ["URBAN", "NATURE", "PUBLIC SERVICES"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles", "Buses", "Trucks"] },
+      { category: "Rail", options: ["Railway"] }
+    ],
+    gameplayTypes: ["DRIVING", "CHASE", "EXPLORATION"],
     gallery: [
-      "/assets/images/screenshots/screenshot-04.jpg"
+      { url: "/assets/images/gameplay/BH_Kota_UrbanRoad_01.jpg", title: "Urban Road", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Kota_Riverfront_02.jpg", title: "Riverfront", type: "Gameplay Environment" }
     ],
     quote: "Power flows through the concrete, but control flows under it."
   },
@@ -334,9 +374,16 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "50 mins from Kota",
     discoveryState: "LOCKED",
     featured: false,
-    image: "/assets/images/screenshots/screenshot-06.jpg",
+    image: "/assets/images/gameplay/BH_Bundi_OldCity_01.jpg",
+locationCategories: ["URBAN", "NATURE", "PUBLIC SERVICES"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles", "Buses", "Trucks"] },
+      { category: "Rail", options: ["Railway"] }
+    ],
+    gameplayTypes: ["DRIVING", "CHASE", "EXPLORATION"],
     gallery: [
-      "/assets/images/screenshots/screenshot-06.jpg"
+      { url: "/assets/images/gameplay/BH_Bundi_OldCity_01.jpg", title: "Old City", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Bundi_HillRoad_02.jpg", title: "Hill Road", type: "Gameplay Environment" }
     ],
     quote: "The highest walls always hide the deepest secrets."
   },
@@ -384,9 +431,16 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "1 hr 10 mins from Jaipur",
     discoveryState: "LOCKED",
     featured: true,
-    image: "/assets/images/screenshots/screenshot-01.jpg",
+    image: "/assets/images/gameplay/BH_Ajmer_CityMarket_01.jpg",
+locationCategories: ["URBAN", "TRANSPORT", "HERITAGE"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles", "Buses", "Trucks"] },
+      { category: "Rail", options: ["Railway"] }
+    ],
+    gameplayTypes: ["DRIVING", "EXPLORATION", "PHOTOGRAPHY"],
     gallery: [
-      "/assets/images/screenshots/screenshot-01.jpg"
+      { url: "/assets/images/gameplay/BH_Ajmer_CityMarket_01.jpg", title: "City Market", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Ajmer_HillLake_02.jpg", title: "Hill Lake", type: "Gameplay Environment" }
     ],
     quote: "All roads run through Ajmer, but none leave without a toll."
   },
@@ -434,9 +488,16 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "55 mins from Ajmer",
     discoveryState: "LOCKED",
     featured: false,
-    image: "/assets/images/hero/hero-desert-road.jpg",
+    image: "/assets/images/gameplay/BH_Pali_IndustrialRoad_01.jpg",
+locationCategories: ["URBAN", "TRANSPORT", "HERITAGE"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles", "Buses", "Trucks"] },
+      { category: "Rail", options: ["Railway"] }
+    ],
+    gameplayTypes: ["DRIVING", "EXPLORATION", "PHOTOGRAPHY"],
     gallery: [
-      "/assets/images/hero/hero-desert-road.jpg"
+      { url: "/assets/images/gameplay/BH_Pali_IndustrialRoad_01.jpg", title: "Industrial Road", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Pali_RuralRoad_02.jpg", title: "Rural Road", type: "Gameplay Environment" }
     ],
     quote: "Out here, there are no mirrors—only the road ahead and the dust behind."
   },
@@ -494,10 +555,17 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "1 hr 30 mins from Pali",
     discoveryState: "IN DEVELOPMENT",
     featured: true,
-    image: "/assets/images/world/world-jodhpur.jpg",
+    image: "/assets/images/gameplay/BH_Jodhpur_BlueCity_01.jpg",
+locationCategories: ["URBAN", "HERITAGE", "TRANSPORT", "NATURE"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles", "Buses", "Trucks"] },
+      { category: "Rail", options: ["Railway"] },
+      { category: "Air", options: ["Airport"] }
+    ],
+    gameplayTypes: ["DRIVING", "CHASE", "STEALTH", "EXPLORATION"],
     gallery: [
-      "/assets/images/world/world-jodhpur.jpg",
-      "/assets/images/screenshots/screenshot-07.jpg"
+      { url: "/assets/images/gameplay/BH_Jodhpur_BlueCity_01.jpg", title: "Blue City", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Jodhpur_NightHighway_02.jpg", title: "Night Highway", type: "Gameplay Environment" }
     ],
     quote: "Blue stone by day, long shadows by night."
   },
@@ -555,10 +623,17 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "2 hrs 45 mins from Jodhpur",
     discoveryState: "LOCKED",
     featured: true,
-    image: "/assets/images/world/world-jaisalmer.jpg",
+    image: "/assets/images/gameplay/BH_Jaisalmer_GoldenDunes_01.jpg",
+locationCategories: ["URBAN", "HERITAGE", "TRANSPORT", "NATURE"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles", "Buses", "Trucks"] },
+      { category: "Rail", options: ["Railway"] },
+      { category: "Air", options: ["Airport"] }
+    ],
+    gameplayTypes: ["DRIVING", "CHASE", "STEALTH", "EXPLORATION"],
     gallery: [
-      "/assets/images/world/world-jaisalmer.jpg",
-      "/assets/images/screenshots/screenshot-08.jpg"
+      { url: "/assets/images/gameplay/BH_Jaisalmer_GoldenDunes_01.jpg", title: "Golden Dunes", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Jaisalmer_DesertSettlement_02.jpg", title: "Desert Settlement", type: "Gameplay Environment" }
     ],
     quote: "The desert forgives neither speed nor hesitation."
   },
@@ -606,9 +681,16 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "2 hrs from Jaisalmer",
     discoveryState: "LOCKED",
     featured: false,
-    image: "/assets/images/screenshots/screenshot-02.jpg",
+    image: "/assets/images/gameplay/BH_Barmer_IndustrialCorridor_01.jpg",
+locationCategories: ["URBAN", "TRANSPORT", "HERITAGE"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles", "Buses", "Trucks"] },
+      { category: "Rail", options: ["Railway"] }
+    ],
+    gameplayTypes: ["DRIVING", "EXPLORATION", "PHOTOGRAPHY"],
     gallery: [
-      "/assets/images/screenshots/screenshot-02.jpg"
+      { url: "/assets/images/gameplay/BH_Barmer_IndustrialCorridor_01.jpg", title: "Industrial Corridor", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Barmer_HighwayCheckpoint_02.jpg", title: "Highway Checkpoint", type: "Gameplay Environment" }
     ],
     quote: "Out here, black gold buys more silence than gold ever did."
   },
@@ -667,9 +749,18 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "2 hrs from Ajmer",
     discoveryState: "IN DEVELOPMENT",
     featured: true,
-    image: "/assets/images/screenshots/screenshot-03.jpg",
+    image: "/assets/images/gameplay/BH_Udaipur_LakeDrive_01.jpg",
+locationCategories: ["URBAN", "HERITAGE", "NATURE", "TRANSPORT"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles"] },
+      { category: "Rail", options: ["Railway"] },
+      { category: "Air", options: ["Airport"] },
+      { category: "Water", options: ["Boat"] }
+    ],
+    gameplayTypes: ["BOATING", "INVESTIGATION", "PHOTOGRAPHY"],
     gallery: [
-      "/assets/images/screenshots/screenshot-03.jpg"
+      { url: "/assets/images/gameplay/BH_Udaipur_LakeDrive_01.jpg", title: "Lake Drive", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Udaipur_BoatInvestigation_02.jpg", title: "Boat Investigation", type: "Gameplay Environment" }
     ],
     quote: "Still waters reflect the brightest lies.",
     characterAffiliation: {
@@ -721,9 +812,18 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "40 mins from Udaipur",
     discoveryState: "LOCKED",
     featured: false,
-    image: "/assets/images/screenshots/screenshot-04.jpg",
+    image: "/assets/images/gameplay/BH_Rajsamand_ReservoirRoad_01.jpg",
+locationCategories: ["URBAN", "HERITAGE", "NATURE", "TRANSPORT"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles"] },
+      { category: "Rail", options: ["Railway"] },
+      { category: "Air", options: ["Airport"] },
+      { category: "Water", options: ["Boat"] }
+    ],
+    gameplayTypes: ["BOATING", "INVESTIGATION", "PHOTOGRAPHY"],
     gallery: [
-      "/assets/images/screenshots/screenshot-04.jpg"
+      { url: "/assets/images/gameplay/BH_Rajsamand_ReservoirRoad_01.jpg", title: "Reservoir Road", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Rajsamand_AravalliRoad_02.jpg", title: "Aravalli Road", type: "Gameplay Environment" }
     ],
     quote: "Under the white dust, blood and marble look the same."
   },
@@ -771,9 +871,16 @@ export const worldRegions: WorldRegion[] = [
     travelTime: "1 hr 15 mins north of Jaipur",
     discoveryState: "LOCKED",
     featured: false,
-    image: "/assets/images/screenshots/screenshot-06.jpg",
+    image: "/assets/images/gameplay/BH_Sikar_HistoricTown_01.jpg",
+locationCategories: ["URBAN", "TRANSPORT", "HERITAGE"],
+    transportation: [
+      { category: "Road", options: ["Cars", "Motorcycles", "Buses", "Trucks"] },
+      { category: "Rail", options: ["Railway"] }
+    ],
+    gameplayTypes: ["DRIVING", "EXPLORATION", "PHOTOGRAPHY"],
     gallery: [
-      "/assets/images/screenshots/screenshot-06.jpg"
+      { url: "/assets/images/gameplay/BH_Sikar_HistoricTown_01.jpg", title: "Historic Town", type: "Gameplay Environment" },
+      { url: "/assets/images/gameplay/BH_Sikar_RuralFarmRoad_02.jpg", title: "Rural Farm Road", type: "Gameplay Environment" }
     ],
     quote: "Gold was painted on these walls, but iron holds them up."
   }
