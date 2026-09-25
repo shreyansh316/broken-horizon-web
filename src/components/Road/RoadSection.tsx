@@ -14,62 +14,64 @@ export const RoadSection: React.FC = () => {
   const waypoints: WaypointStop[] = [
     {
       id: 'mile-00',
-      mile: 'MILE 000',
+      mile: 'CONCEPT MILESTONE',
       name: 'JAIPUR BYPASS',
       terrain: 'Urban Freight Corridor',
       desc: 'The journey starts at Mehta Garage under neon toll gantry lights, slipping past highway patrols into the outer dark.',
-      image: '/assets/images/screenshots/screenshot-01.jpg',
+      image: '/assets/images/gameplay/BH_Jaipur_RingRoad_02.jpg',
     },
     {
       id: 'mile-84',
-      mile: 'MILE 084',
+      mile: 'CONCEPT MILESTONE',
       name: 'SAMBHAR SALT FLATS',
       terrain: 'High-Speed Alkaline Basin',
       desc: 'Vast shimmering salt beds where maximum overdrive speeds are reached beneath clear nocturnal desert skies.',
-      image: '/assets/images/screenshots/screenshot-02.jpg',
+      image: '/assets/images/gameplay/BH_Jodhpur_NightHighway_02.jpg',
     },
     {
       id: 'mile-168',
-      mile: 'MILE 168',
+      mile: 'CONCEPT MILESTONE',
       name: 'ARAVALLI SWITCHBACKS',
       terrain: 'Mountain Ascent & Stone Cuts',
       desc: 'Steep serpentine switchbacks cutting through ancient stone ridges, prone to rockslides and private security ambushes.',
-      image: '/assets/images/screenshots/screenshot-03.jpg',
+      image: '/assets/images/gameplay/BH_Rajsamand_AravalliRoad_02.jpg',
     },
     {
       id: 'mile-242',
-      mile: 'MILE 242',
+      mile: 'CONCEPT MILESTONE',
       name: 'UDAIPUR SANCTUARY',
       terrain: 'Lake Basins & Hidden Havelis',
       desc: 'Shadowy waterfront alleys and secret safehouses where stolen manifest telemetry is deciphered.',
-      image: '/assets/images/screenshots/screenshot-04.jpg',
+      image: '/assets/images/gameplay/BH_Udaipur_LakeDrive_01.jpg',
     },
     {
       id: 'mile-380',
-      mile: 'MILE 380',
+      mile: 'CONCEPT MILESTONE',
       name: 'THAR DESERT SEA',
       terrain: 'Off-Road Dunes & Haboobs',
       desc: 'Where asphalt terminates entirely. Low tire pressure and navigation by ancient stars are essential for survival.',
-      image: '/assets/images/screenshots/screenshot-01.jpg',
+      image: '/assets/images/gameplay/BH_Jaisalmer_GoldenDunes_01.jpg',
     },
     {
       id: 'mile-495',
-      mile: 'MILE 495',
+      mile: 'CONCEPT MILESTONE',
       name: 'JAISALMER BASTION',
       terrain: 'Fortress Citadel Frontier',
       desc: 'Golden sandstone ramparts towering over the western boundary, guarding the final subterranean anomaly.',
-      image: '/assets/images/screenshots/screenshot-02.jpg',
+      image: '/assets/images/gameplay/BH_Jaisalmer_DesertSettlement_02.jpg',
     },
   ];
 
   return (
     <section className="highway-route-stage" id="the-road" aria-label="495 Miles of Road">
       <div className="section-container">
-        {/* Editorial Section Header */}
         <div className="editorial-lead-block">
-          <span className="lead-eyebrow">CONNECTED TRAVEL NETWORK</span>
-          <h2 className="lead-headline">495 MILES OF ROAD</h2>
-          <p className="lead-subcopy">One connected fictionalized Rajasthan road network across six major travel milestones.</p>
+          <span className="lead-eyebrow">CONNECTED WORLD NETWORK</span>
+          <h2 className="lead-headline">PLANNED WORLD NETWORK</h2>
+          <p className="lead-subcopy">A planned connected fictionalized Rajasthan travel network linking distinct environments, cities, highways, deserts, hills, lakes, heritage areas, and remote roads.</p>
+          <div className="world-status-tag" style={{ marginTop: '12px', fontSize: '11px', color: '#ffb347', letterSpacing: '0.1em', fontWeight: 'bold' }}>
+            STATUS: WORLD CONCEPT / FUTURE DEVELOPMENT
+          </div>
         </div>
 
         {/* Clean Atmospheric Visual Route Grid */}
