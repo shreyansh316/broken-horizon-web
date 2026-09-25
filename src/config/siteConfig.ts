@@ -43,6 +43,6 @@ export const siteConfig: SiteConfig = {
   youtubeUrl: "#",
   twitterUrl: "#",
   instagramUrl: "#",
-  googleAppsScriptUrl: import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || "",
+  googleAppsScriptUrl: import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || "https://script.google.com/macros/s/AKfycbx8RVCCOwg0ljiA8xOWYp-wFmktSk0AgITxd4aGaZ93yXBO5kkc6qS2qdkZ5XoAutrV/exec",
 };
 

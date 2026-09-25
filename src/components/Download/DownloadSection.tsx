@@ -154,7 +154,7 @@ export const DownloadSection: React.FC<DownloadSectionProps> = () => {
                 >
                   {isSubmitting ? (
                     <>
-                      <span>REQUESTING ACCESS...</span>
+                      <span>TRANSMITTING...</span>
                       <RefreshCw size={16} className="animate-spin" />
                     </>
                   ) : (
@@ -167,7 +167,7 @@ export const DownloadSection: React.FC<DownloadSectionProps> = () => {
               </div>
 
               <div className="playtest-form-meta">
-                <span>Your email is used for Broken Horizon playtest communication only. No spam.</span>
+                <span>Direct distribution via official verified portal. No spam.</span>
                 <span className="meta-sep">•</span>
                 <a
                   href="https://samwooduis.itch.io/broken-horizon"
@@ -184,12 +184,12 @@ export const DownloadSection: React.FC<DownloadSectionProps> = () => {
               <div className="confirmed-icon">
                 <Check size={28} />
               </div>
-              <h3 className="confirmed-title">APPLICATION RECEIVED</h3>
+              <h3 className="confirmed-title">CLEARANCE DISPATCH SENT ✓</h3>
               <p className="confirmed-msg">
-                Your operative file for <strong>{callsign.toUpperCase()}</strong> has been logged in the pre-alpha clearance queue. A confirmation dispatch has been sent to <strong>{email}</strong>.
+                Your operative signal for <strong>{callsign.toUpperCase()}</strong> has been logged in the pre-alpha clearance queue. An encrypted dispatch has been transmitted to <strong>{email}</strong>.
               </p>
               <p style={{ fontSize: '0.8rem', color: '#71717a', margin: '0.5rem 0 1.25rem 0', fontFamily: 'Courier New, monospace' }}>
-                If you do not see the confirmation email in your primary inbox, please check your spam folder.
+                Check your inbox (and spam folder) for your Clearance ID and signal coordinates from Ishaan Mirza.
               </p>
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>

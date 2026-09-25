@@ -11,6 +11,7 @@ import {
   generateWaitlistEmail,
 } from '../utils/emailTemplates';
 import type { EmailPayload } from '../utils/emailTemplates';
+import { siteConfig } from '../config/siteConfig';
 
 const STORAGE_KEY_APPS = 'broken_horizon_playtest_applications_v1';
 const STORAGE_KEY_AUDIT = 'broken_horizon_playtest_audit_v1';
@@ -202,7 +203,7 @@ class PlaytestService {
         return stored.trim();
       }
     }
-    return import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || '';
+    return import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || siteConfig.googleAppsScriptUrl || '';
   }
 
   /**
