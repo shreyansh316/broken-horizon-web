@@ -1,0 +1,243 @@
+/* ==========================================================================
+   BROKEN HORIZON — CINEMATIC ANIMATIONS & TRANSITIONS
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   HERO TIMED CINEMATIC SEQUENCE (Requirement 1)
+   -------------------------------------------------------------------------- */
+.hero-stage-0 {
+  background-color: #050608;
+}
+
+/* 0.3s Atmospheric Texture */
+.hero-texture-layer {
+  opacity: 0;
+  animation: heroTextureFade 2.4s ease-out 0.3s forwards;
+}
+
+@keyframes heroTextureFade {
+  0% { opacity: 0; }
+  100% { opacity: 0.35; }
+}
+
+/* 0.7s Background image slowly appears */
+.hero-bg-layer {
+  opacity: 0;
+  transform: scale(1.04);
+  filter: blur(12px) brightness(0.6);
+  animation: heroBgReveal 3.2s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
+}
+
+@keyframes heroBgReveal {
+  0% {
+    opacity: 0;
+    transform: scale(1.04);
+    filter: blur(12px) brightness(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px) brightness(1);
+  }
+}
+
+/* 1.2s Horizon line becomes visible */
+.hero-horizon-line {
+  opacity: 0;
+  transform: scaleX(0);
+  animation: heroHorizonReveal 1.6s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
+}
+
+@keyframes heroHorizonReveal {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  100% {
+    opacity: 0.85;
+    transform: scaleX(1);
+  }
+}
+
+/* 1.5s Logo/title reveals */
+.hero-title-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(8px);
+  animation: heroTitleReveal 1.8s cubic-bezier(0.16, 1, 0.3, 1) 1.5s forwards;
+}
+
+@keyframes heroTitleReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(28px);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+}
+
+/* 1.9s Tagline appears */
+.hero-tagline-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: heroSimpleReveal 1.4s cubic-bezier(0.16, 1, 0.3, 1) 1.9s forwards;
+}
+
+/* 2.2s Description appears */
+.hero-desc-reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: heroSimpleReveal 1.4s cubic-bezier(0.16, 1, 0.3, 1) 2.2s forwards;
+}
+
+/* 2.5s Buttons appear */
+.hero-cta-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: heroSimpleReveal 1.4s cubic-bezier(0.16, 1, 0.3, 1) 2.5s forwards;
+}
+
+@keyframes heroSimpleReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   SCROLL INDICATOR ANIMATION
+   -------------------------------------------------------------------------- */
+.scroll-indicator-line {
+  width: 1px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-indicator-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 24px;
+  background: linear-gradient(180deg, transparent, var(--color-amber-light), transparent);
+  animation: scrollLineDrop 2s infinite ease-in-out;
+}
+
+@keyframes scrollLineDrop {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+/* --------------------------------------------------------------------------
+   VIEWPORT SCROLL REVEAL (IntersectionObserver based)
+   -------------------------------------------------------------------------- */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 {
+  transition-delay: 0.12s;
+}
+
+.reveal-delay-2 {
+  transition-delay: 0.24s;
+}
+
+.reveal-delay-3 {
+  transition-delay: 0.36s;
+}
+
+/* --------------------------------------------------------------------------
+   THIN HORIZON LINE PROGRESS ANIMATION (Development Section)
+   -------------------------------------------------------------------------- */
+.horizon-progress-container {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: visible;
+}
+
+.horizon-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-amber-primary), var(--color-amber-light));
+  position: relative;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.horizon-progress-node {
+  position: absolute;
+  right: -5px;
+  top: -4px;
+  width: 11px;
+  height: 11px;
+  background: var(--color-amber-bright);
+  border: 2px solid var(--color-black);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--color-amber-light);
+}
+
+/* --------------------------------------------------------------------------
+   TRAILER SECTION SCALE
+   -------------------------------------------------------------------------- */
+.trailer-viewport-box {
+  transform: scale(0.96);
+  opacity: 0.8;
+  transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.trailer-viewport-box.in-view {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   PREFERS-REDUCED-MOTION OVERRIDES (Requirement 29)
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .hero-texture-layer,
+  .hero-bg-layer,
+  .hero-horizon-line,
+  .hero-title-reveal,
+  .hero-tagline-reveal,
+  .hero-desc-reveal,
+  .hero-cta-reveal,
+  .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .trailer-viewport-box {
+    transform: scale(1) !important;
+    opacity: 1 !important;
+  }
+}

@@ -1,0 +1,414 @@
+/* ==========================================================================
+   BROKEN HORIZON — DESIGN SYSTEM & TOKENS
+   Visual Identity: Cinematic AAA Open-World Action-Adventure (Rajasthan-inspired)
+   ========================================================================== */
+
+:root {
+  /* Color Palette */
+  --bg-primary: #0a0b0e;
+  --bg-secondary: #101217;
+  --bg-surface: #15181f;
+  --bg-card: #181b23;
+  --bg-card-hover: #1f232e;
+  --bg-card-glass: rgba(24, 27, 35, 0.75);
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(217, 119, 6, 0.15);
+  --border-strong: rgba(217, 119, 6, 0.35);
+  --border-stone: rgba(255, 255, 255, 0.08);
+  --border-stone-hover: rgba(255, 255, 255, 0.2);
+
+  /* Desert Amber & Gold */
+  --amber-primary: #d97706;
+  --amber-light: #f59e0b;
+  --amber-bright: #fbbf24;
+  --amber-glow: rgba(245, 158, 11, 0.25);
+  --amber-glow-strong: rgba(245, 158, 11, 0.5);
+
+  /* Desert Sand & Earth */
+  --sand-50: #faf7f2;
+  --sand-100: #f4ede0;
+  --sand-200: #e7d8c0;
+  --sand-300: #c9ab81;
+  --sand-500: #9e7f57;
+  --sand-muted: #826a4b;
+
+  /* Terracotta & Red Accents */
+  --terracotta: #b93b2a;
+  --terracotta-dark: #8a2517;
+  --terracotta-glow: rgba(185, 59, 42, 0.3);
+
+  /* Stone & Monochromes */
+  --text-white: #f8fafc;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-dark-muted: #64748b;
+
+  /* Typography */
+  --font-display: 'Cinzel', serif;
+  --font-subheading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Elevation & Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.65);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.85);
+  --shadow-glow: 0 0 28px rgba(245, 158, 11, 0.2);
+
+  /* Layout */
+  --max-width: 1360px;
+  --header-height: 80px;
+  --header-height-compact: 68px;
+  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-base: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Reset & Box Sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-height);
+  font-size: 16px;
+  color-scheme: dark;
+  background-color: var(--bg-primary);
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Desert Dust & Road Grain Texture Background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.035;
+  background-image: radial-gradient(#d97706 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Accessibility Focus States */
+:focus-visible {
+  outline: 2px solid var(--amber-light);
+  outline-offset: 3px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+img, video {
+  max-width: 100%;
+  display: block;
+}
+
+/* Typography Utilities */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-white);
+  line-height: 1.2;
+}
+
+.text-gold {
+  color: var(--amber-light);
+}
+
+.text-sand {
+  color: var(--sand-300);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.font-subheading {
+  font-family: var(--font-subheading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+/* Section Shared Wrapper */
+.section-wrapper {
+  position: relative;
+  padding-top: 6.5rem;
+  padding-bottom: 6.5rem;
+  border-bottom: 1px solid var(--border-stone);
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .section-wrapper {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+}
+
+/* Section Header Typography */
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-subheading);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber-light);
+  margin-bottom: 1rem;
+}
+
+.section-tag::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  background: var(--amber-primary);
+}
+
+.section-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  color: var(--text-white);
+  line-height: 1.15;
+}
+
+@media (min-width: 768px) {
+  .section-title {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-title {
+    font-size: 3.5rem;
+  }
+}
+
+.section-subtitle {
+  font-size: 1.125rem;
+  color: var(--sand-200);
+  max-width: 680px;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+@media (min-width: 768px) {
+  .section-subtitle {
+    font-size: 1.25rem;
+  }
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-family: var(--font-subheading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.95rem 1.85rem;
+  border-radius: 2px;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--amber-light) 0%, var(--amber-primary) 100%);
+  color: #0c0d10;
+  font-weight: 800;
+  box-shadow: 0 4px 20px rgba(217, 119, 6, 0.35);
+  border: 1px solid var(--amber-bright);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--amber-bright) 0%, var(--amber-light) 100%);
+  box-shadow: 0 6px 28px rgba(245, 158, 11, 0.55);
+  transform: translateY(-2px);
+  color: #000000;
+}
+
+.btn-secondary {
+  background: rgba(18, 20, 26, 0.85);
+  color: var(--text-white);
+  border: 1px solid var(--border-stone-hover);
+  backdrop-filter: blur(8px);
+}
+
+.btn-secondary:hover {
+  border-color: var(--amber-light);
+  color: var(--amber-light);
+  background: rgba(28, 31, 40, 0.95);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-stone);
+}
+
+.btn-outline:hover {
+  border-color: var(--sand-300);
+  color: var(--text-white);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.btn-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(0.5);
+}
+
+/* Subtle Architectural Road Markings & Accents */
+.road-marking {
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--amber-primary) 0,
+    var(--amber-primary) 24px,
+    transparent 24px,
+    transparent 48px
+  );
+  opacity: 0.45;
+}
+
+/* Glass Card */
+.glass-card {
+  background: var(--bg-card-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-stone);
+  transition: all var(--transition-base);
+}
+
+.glass-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.65rem;
+  font-family: var(--font-subheading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  line-height: 1;
+}
+
+.badge-amber {
+  background: rgba(217, 119, 6, 0.15);
+  color: var(--amber-bright);
+  border: 1px solid rgba(217, 119, 6, 0.35);
+}
+
+.badge-stone {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-stone);
+}
+
+.badge-red {
+  background: rgba(185, 59, 42, 0.18);
+  color: #f87171;
+  border: 1px solid rgba(185, 59, 42, 0.4);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0b0e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2b2e3a;
+  border-radius: 4px;
+  border: 2px solid #0a0b0e;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--amber-primary);
+}
+
+/* Reduced Motion Mode (Requirement 19 & 22) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

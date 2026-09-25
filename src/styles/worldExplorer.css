@@ -1,0 +1,1983 @@
+/* ==========================================================================
+   BROKEN HORIZON — WORLD EXPLORER & INTERACTIVE MAP STYLES
+   Phase 2: Tactical Territory Atlas & Dynamic In-Universe Cartography
+   ========================================================================== */
+
+.world-explorer-root {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #08090b;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+}
+
+/* --------------------------------------------------------------------------
+   1. CINEMATIC WORLD INTRO OVERLAY
+   -------------------------------------------------------------------------- */
+.world-intro-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1000;
+  background-color: #050608;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.world-intro-overlay.is-fading {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.05);
+}
+
+.world-intro-content {
+  text-align: center;
+  position: relative;
+  padding: 2rem;
+}
+
+.world-intro-horizon {
+  width: 1px;
+  height: 1px;
+  background: var(--color-amber-primary);
+  margin: 0 auto 2rem;
+  opacity: 0;
+  transform: scaleX(0);
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+}
+
+.world-intro-horizon.horizon-active {
+  width: 180px;
+  height: 1px;
+  opacity: 0.8;
+  transform: scaleX(1);
+}
+
+.world-intro-text-wrap {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.world-intro-text-wrap.text-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.world-intro-region-tag {
+  display: block;
+  font-family: var(--font-subheading);
+  font-size: 0.875rem;
+  letter-spacing: 0.35em;
+  color: var(--color-amber-bright);
+  margin-bottom: 0.5rem;
+}
+
+.world-intro-title {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  margin-bottom: 0.4rem;
+}
+
+@media (min-width: 768px) {
+  .world-intro-title {
+    font-size: 4.5rem;
+  }
+}
+
+.world-intro-sub {
+  font-family: var(--font-subheading);
+  font-size: 1rem;
+  letter-spacing: 0.25em;
+  color: var(--text-muted);
+}
+
+.world-intro-skip-btn {
+  position: absolute;
+  bottom: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-subheading);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.6rem 1.2rem;
+  border-radius: 2px;
+  transition: all var(--transition-fast);
+}
+
+.world-intro-skip-btn:hover {
+  border-color: var(--color-amber-light);
+  color: #ffffff;
+  background: rgba(217, 119, 54, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   2. TOP TACTICAL NAVIGATION BAR
+   -------------------------------------------------------------------------- */
+.world-explorer-navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  z-index: 100;
+  background: linear-gradient(180deg, rgba(8, 9, 11, 0.96) 0%, rgba(8, 9, 11, 0.7) 70%, transparent 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+}
+
+.we-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.we-back-home-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-subheading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.45rem 0.9rem;
+  border-radius: 2px;
+  transition: all var(--transition-fast);
+}
+
+.we-back-home-btn:hover {
+  background: rgba(217, 119, 54, 0.12);
+  border-color: var(--color-amber-light);
+  color: #ffffff;
+}
+
+.we-brand-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.we-title-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.we-brand-lead {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.we-brand-sub {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  color: var(--color-amber-light);
+}
+
+.we-nav-center {
+  flex: 1;
+  max-width: 440px;
+  margin: 0 1.5rem;
+}
+
+.we-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.we-audio-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.4rem 0.75rem;
+  border-radius: 2px;
+  transition: all var(--transition-fast);
+}
+
+.we-audio-btn:hover {
+  color: var(--color-amber-light);
+  border-color: rgba(217, 119, 54, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   3. SEARCH BAR COMPONENT
+   -------------------------------------------------------------------------- */
+.world-search-container {
+  position: relative;
+  width: 100%;
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(16, 18, 23, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.4rem 0.75rem;
+  border-radius: 2px;
+  transition: all var(--transition-fast);
+}
+
+.search-input-wrapper.is-focused {
+  border-color: var(--color-amber-light);
+  background: rgba(20, 24, 30, 0.95);
+  box-shadow: 0 0 16px rgba(217, 119, 54, 0.2);
+}
+
+.search-icon-lens {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.search-input-field {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-subheading);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+}
+
+.search-input-field::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.search-clear-btn {
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.search-results-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: rgba(10, 12, 16, 0.96);
+  border: 1px solid rgba(217, 119, 54, 0.35);
+  border-radius: 2px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 200;
+  backdrop-filter: blur(12px);
+}
+
+.search-result-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.search-result-row:hover {
+  background: rgba(217, 119, 54, 0.12);
+}
+
+.search-res-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.search-res-icon.icon-district { background: rgba(217, 119, 54, 0.2); color: #f4a460; }
+.search-res-icon.icon-landmark { background: rgba(204, 161, 57, 0.2); color: #cca139; }
+.search-res-icon.icon-character { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+.search-res-icon.icon-activity { background: rgba(224, 75, 75, 0.2); color: #e04b4b; }
+
+.search-res-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-res-title {
+  font-family: var(--font-subheading);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+}
+
+.search-res-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--text-muted);
+}
+
+.search-no-results {
+  padding: 1.25rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   4. FILTER STRIP & DISTRICT DRAWER
+   -------------------------------------------------------------------------- */
+.world-filter-strip {
+  position: absolute;
+  top: 72px;
+  left: 1.5rem;
+  right: 1.5rem;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.world-filter-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  overflow-x: auto;
+  pointer-events: auto;
+  background: rgba(10, 12, 15, 0.85);
+  padding: 0.35rem 0.5rem;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+.filter-chip-btn {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 0.3rem 0.65rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-chip-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.filter-chip-btn.is-active {
+  color: #ffffff;
+  background: rgba(217, 119, 54, 0.25);
+  border-color: var(--color-amber-primary);
+}
+
+/* District Drawer */
+.district-drawer-wrap {
+  position: relative;
+  pointer-events: auto;
+}
+
+.district-drawer-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+  background: rgba(10, 12, 15, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.45rem 0.85rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
+}
+
+.district-drawer-toggle-btn:hover {
+  border-color: var(--color-amber-light);
+  color: #ffffff;
+}
+
+.district-drawer-content {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 280px;
+  max-height: 380px;
+  overflow-y: auto;
+  background: rgba(10, 12, 16, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8);
+  z-index: 150;
+  backdrop-filter: blur(12px);
+}
+
+.drawer-district-list {
+  list-style: none;
+  padding: 0.35rem 0;
+}
+
+.drawer-district-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+
+.drawer-district-btn:hover {
+  background: rgba(217, 119, 54, 0.15);
+}
+
+.drawer-district-btn.is-active {
+  background: rgba(217, 119, 54, 0.25);
+  border-left: 2px solid var(--color-amber-primary);
+}
+
+.drawer-index {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--color-amber-light);
+}
+
+.drawer-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-name {
+  font-family: var(--font-subheading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+}
+
+.drawer-biome {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: var(--text-muted);
+}
+
+.drawer-status-pill {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   5. INTERACTIVE MAP CANVAS CONTAINER
+   -------------------------------------------------------------------------- */
+.world-map-canvas-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  cursor: grab;
+  outline: none;
+}
+
+.world-map-canvas-container.is-dragging {
+  cursor: grabbing;
+}
+
+.world-map-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Keyframes & Animations */
+.road-transit-pulse {
+  animation: transitPulse 4s infinite linear;
+}
+
+@keyframes transitPulse {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -128; }
+}
+
+.corridor-pulse-line {
+  animation: corridorScan 3s infinite linear;
+}
+
+@keyframes corridorScan {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -72; }
+}
+
+.selected-node-pulse {
+  animation: nodeRingPulse 1.8s infinite ease-out;
+}
+
+@keyframes nodeRingPulse {
+  0% { r: 6px; opacity: 1; }
+  100% { r: 18px; opacity: 0; }
+}
+
+.marker-selected-pulse {
+  animation: markerPulse 1.6s infinite ease-out;
+}
+
+@keyframes markerPulse {
+  0% { r: 8px; opacity: 1; }
+  100% { r: 20px; opacity: 0; }
+}
+
+/* Marker Tooltip Visibility */
+.map-marker-item .marker-badge-hover {
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.map-marker-item:hover .marker-badge-hover,
+.map-marker-item.marker-selected .marker-badge-hover {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   6. DISTRICT BRIEFING PANEL (Tactical Dossier)
+   -------------------------------------------------------------------------- */
+.district-briefing-panel {
+  position: absolute;
+  top: 130px;
+  right: 1.5rem;
+  width: 380px;
+  max-height: calc(100vh - 210px);
+  background: rgba(10, 12, 16, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(14px);
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slidePanelIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slidePanelIn {
+  0% { transform: translateX(40px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+.d-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.d-panel-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge-index {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--color-amber-bright);
+}
+
+.badge-status {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  background: rgba(217, 119, 54, 0.2);
+  border: 1px solid var(--color-amber-primary);
+  color: #ffffff;
+  padding: 0.15rem 0.45rem;
+  border-radius: 2px;
+}
+
+.d-panel-close-btn {
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.d-panel-close-btn:hover {
+  color: #ffffff;
+}
+
+.d-panel-image-wrap {
+  width: 100%;
+  height: 140px;
+  position: relative;
+  overflow: hidden;
+}
+
+.d-panel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.d-panel-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(10, 12, 16, 0.95) 100%);
+}
+
+.d-panel-coordinates {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: var(--color-amber-light);
+  background: rgba(0, 0, 0, 0.65);
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+}
+
+.d-panel-body {
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.d-panel-region {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  display: block;
+}
+
+.d-panel-name {
+  font-family: var(--font-display);
+  font-size: 1.625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  margin: 0.1rem 0 0.5rem;
+}
+
+.d-panel-quote {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 0.8125rem;
+  color: var(--color-sand-200);
+  border-left: 2px solid var(--color-amber-primary);
+  padding-left: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.d-panel-desc {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.d-panel-specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.spec-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.5rem;
+  border-radius: 2px;
+}
+
+.spec-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.spec-icon {
+  color: var(--color-amber-light);
+}
+
+.spec-val {
+  font-family: var(--font-subheading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.d-panel-character-callout {
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 0.6rem;
+  border-radius: 2px;
+  margin-bottom: 1rem;
+}
+
+.char-callout-tag {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.15em;
+  color: #38bdf8;
+  display: block;
+}
+
+.char-callout-name {
+  font-family: var(--font-subheading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.char-callout-role {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.d-panel-section {
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  color: var(--color-amber-light);
+  margin-bottom: 0.45rem;
+}
+
+.locations-tags-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.loc-pill {
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.25rem 0.5rem;
+  border-radius: 2px;
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.activities-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.activity-badge {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(217, 119, 54, 0.12);
+  border: 1px solid rgba(217, 119, 54, 0.25);
+  color: var(--color-sand-200);
+  border-radius: 2px;
+}
+
+.d-panel-footer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 14, 18, 0.95);
+}
+
+.d-panel-explore-cta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--color-amber-primary);
+  color: #050608;
+  border: none;
+  padding: 0.7rem;
+  font-family: var(--font-subheading);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.d-panel-explore-cta:hover {
+  background: var(--color-amber-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+}
+
+/* --------------------------------------------------------------------------
+   7. BOTTOM JOURNEY TIMELINE ("THE ROAD")
+   -------------------------------------------------------------------------- */
+.world-bottom-tray {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  right: 1.5rem;
+  z-index: 80;
+  pointer-events: none;
+}
+
+.journey-timeline-bar {
+  background: rgba(10, 12, 16, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  padding: 0.6rem 1rem;
+  backdrop-filter: blur(12px);
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.journey-timeline-label {
+  display: flex;
+  align-items: center;
+}
+
+.journey-tag {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.18em;
+  color: var(--color-amber-light);
+}
+
+.journey-waypoints-track {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.journey-waypoints-track::-webkit-scrollbar {
+  display: none;
+}
+
+.waypoint-node-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.3rem 0.6rem;
+  border-radius: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.waypoint-node-btn:hover {
+  border-color: var(--color-amber-primary);
+  background: rgba(217, 119, 54, 0.1);
+}
+
+.waypoint-node-btn.is-active {
+  border-color: var(--color-amber-light);
+  background: rgba(217, 119, 54, 0.25);
+  box-shadow: 0 0 10px rgba(217, 119, 54, 0.3);
+}
+
+.waypoint-idx {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: var(--color-amber-bright);
+}
+
+.waypoint-name {
+  font-family: var(--font-subheading);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+}
+
+.waypoint-connector {
+  color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   8. HUD MAP CONTROLS & COMPASS TELEMETRY
+   -------------------------------------------------------------------------- */
+.map-hud-controls {
+  position: absolute;
+  bottom: 5.5rem;
+  right: 1.5rem;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: rgba(10, 12, 16, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.35rem;
+  border-radius: 3px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.7);
+}
+
+.hud-ctrl-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.hud-ctrl-btn:hover {
+  background: rgba(217, 119, 54, 0.2);
+  border-color: var(--color-amber-primary);
+  color: #ffffff;
+}
+
+.hud-ctrl-btn.is-active {
+  background: var(--color-amber-primary);
+  color: #050608;
+}
+
+.hud-ctrl-separator {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 0.15rem 0;
+}
+
+/* Legend Card */
+.map-legend-card {
+  position: absolute;
+  bottom: 5.5rem;
+  right: 4.5rem;
+  width: 260px;
+  background: rgba(10, 12, 16, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  padding: 0.85rem;
+  z-index: 95;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+}
+
+.legend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.4rem;
+}
+
+.legend-title {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.15em;
+  color: var(--color-amber-light);
+}
+
+.legend-close-btn {
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.legend-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.legend-swatch {
+  width: 18px;
+  height: 4px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.legend-swatch.line-primary { background: #f4a460; }
+.legend-swatch.line-corridor { background: #e04b4b; box-shadow: 0 0 6px rgba(224, 75, 75, 0.6); }
+.legend-swatch.marker-district { width: 10px; height: 10px; background: rgba(217, 119, 54, 0.4); border: 1px solid #f4a460; border-radius: 50%; }
+.legend-swatch.marker-garage { width: 8px; height: 8px; background: #f4a460; transform: rotate(45deg); }
+.legend-swatch.marker-character { width: 8px; height: 8px; background: #38bdf8; transform: rotate(45deg); }
+.legend-swatch.marker-story { width: 8px; height: 8px; background: #e04b4b; transform: rotate(45deg); }
+
+.legend-text {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: var(--text-secondary);
+}
+
+.legend-footer-note {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.4rem;
+}
+
+/* World Telemetry & Compass HUD */
+.world-telemetry-hud {
+  position: absolute;
+  top: 72px;
+  right: 1.5rem;
+  z-index: 85;
+  background: rgba(10, 12, 16, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  padding: 0.4rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.hud-compass-rose {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--color-amber-light);
+}
+
+.compass-cardinal {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 800;
+}
+
+.hud-stat-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-stat-num {
+  font-family: var(--font-subheading);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.hud-stat-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.hud-stat-coord {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--color-amber-bright);
+  line-height: 1;
+}
+
+.hud-stat-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   9. DISTRICT DISCOVERY BANNER NOTIFICATION
+   -------------------------------------------------------------------------- */
+.district-discovery-banner {
+  position: absolute;
+  top: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 120;
+  background: rgba(10, 12, 16, 0.95);
+  border: 1px solid var(--color-amber-primary);
+  border-radius: 3px;
+  padding: 0.75rem 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.9), 0 0 20px rgba(217, 119, 54, 0.2);
+  animation: discoveryBannerDrop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+@keyframes discoveryBannerDrop {
+  0% { transform: translate(-50%, -20px); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.discovery-text-wrap {
+  text-align: center;
+}
+
+.discovery-lead {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.25em;
+  color: var(--color-amber-light);
+}
+
+.discovery-district-name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+}
+
+.discovery-tagline {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-sand-200);
+}
+
+/* --------------------------------------------------------------------------
+   10. DEEP DIVE EXPANDED DISTRICT MODAL (MapTransition)
+   -------------------------------------------------------------------------- */
+.district-deep-dive-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.deep-dive-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 6, 8, 0.88);
+  backdrop-filter: blur(12px);
+}
+
+.deep-dive-card {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  max-height: 90vh;
+  background: #0d0f14;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.95);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.deep-dive-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.deep-dive-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  font-family: var(--font-subheading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.45rem 0.9rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.deep-dive-back-btn:hover {
+  background: rgba(217, 119, 54, 0.2);
+  border-color: var(--color-amber-primary);
+}
+
+.deep-dive-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+.deep-dive-hero {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  overflow: hidden;
+}
+
+.deep-dive-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.deep-dive-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(13, 15, 20, 0.2) 0%, rgba(13, 15, 20, 0.95) 100%);
+}
+
+.deep-dive-hero-content {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 2rem;
+  right: 2rem;
+}
+
+.deep-dive-region-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  color: var(--color-amber-light);
+  display: block;
+}
+
+.deep-dive-title {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.deep-dive-subtitle {
+  font-family: var(--font-subheading);
+  font-size: 0.9375rem;
+  color: var(--color-sand-200);
+}
+
+.deep-dive-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+@media (min-width: 768px) {
+  .deep-dive-grid {
+    grid-template-columns: 1.6fr 1fr;
+  }
+}
+
+.deep-dive-section-heading {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  color: var(--color-amber-light);
+  margin-bottom: 0.75rem;
+}
+
+.deep-dive-quote {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--color-sand-200);
+  border-left: 3px solid var(--color-amber-primary);
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+}
+
+.deep-dive-full-desc {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.deep-dive-operative-box {
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 1rem;
+  border-radius: 3px;
+  margin-bottom: 1.5rem;
+}
+
+.operative-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #38bdf8;
+  margin-bottom: 0.35rem;
+}
+
+.operative-tag {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.15em;
+}
+
+.operative-name {
+  font-family: var(--font-subheading);
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.operative-role {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.locations-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+@media (min-width: 600px) {
+  .locations-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.location-item-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.6rem 0.75rem;
+  border-radius: 2px;
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+}
+
+.location-pin {
+  color: var(--color-amber-primary);
+  flex-shrink: 0;
+}
+
+.specs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+}
+
+.spec-key {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--text-muted);
+}
+
+.spec-value {
+  font-family: var(--font-subheading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.spec-value.text-amber {
+  color: var(--color-amber-bright);
+}
+
+.deep-dive-activities-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1rem;
+  border-radius: 3px;
+}
+
+.activities-heading {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  color: var(--color-amber-light);
+  margin-bottom: 0.6rem;
+}
+
+.activities-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.act-bullet {
+  color: var(--color-amber-primary);
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   11. RESPONSIVE DESIGN (Tablets & Mobile Viewports)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .district-briefing-panel {
+    width: 320px;
+    right: 1rem;
+    top: 130px;
+  }
+
+  .world-telemetry-hud {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .world-explorer-navbar {
+    padding: 0 1rem;
+  }
+
+  .we-nav-center {
+    display: none;
+  }
+
+  .world-filter-strip {
+    left: 1rem;
+    right: 1rem;
+    top: 68px;
+  }
+
+  /* District panel converts into bottom sheet */
+  .district-briefing-panel {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 60vh;
+    border-radius: 8px 8px 0 0;
+    z-index: 150;
+    box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.9);
+  }
+
+  .world-bottom-tray {
+    bottom: 0.5rem;
+    left: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .map-hud-controls {
+    bottom: 5.5rem;
+    right: 0.75rem;
+  }
+
+  .district-discovery-banner {
+    width: 90%;
+    top: 110px;
+    padding: 0.6rem 1rem;
+  }
+
+  .discovery-district-name {
+    font-size: 1.1rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12. REDUCED MOTION OVERRIDES
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .world-intro-overlay,
+  .district-briefing-panel,
+  .district-discovery-banner,
+  .road-transit-pulse,
+  .corridor-pulse-line,
+  .selected-node-pulse,
+  .marker-selected-pulse,
+  .anim-radar-sweep,
+  .anim-gps-dash {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   13. TACTICAL RECON, LIVE WEATHER & FACTION LAYER UPGRADES
+   ========================================================================== */
+
+/* Night Recon / Thermal Satellite Mode */
+.world-map-canvas-container.is-night-recon-active {
+  filter: contrast(1.15) brightness(0.92);
+}
+
+.world-map-canvas-container.is-night-recon-active .map-background-group rect:first-child {
+  fill: #030806 !important;
+}
+
+.world-map-canvas-container.is-night-recon-active .district-polygon-path {
+  stroke: rgba(0, 255, 170, 0.35) !important;
+}
+
+.world-map-canvas-container.is-night-recon-active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 255, 170, 0.03) 0px,
+    rgba(0, 255, 170, 0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  z-index: 10;
+}
+
+/* Radar & GPS Animations */
+@keyframes radarSweepRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.anim-radar-sweep {
+  transform-origin: 0px 0px;
+  animation: radarSweepRotate 6s linear infinite;
+}
+
+@keyframes radarWaveDrift {
+  0% {
+    stroke-dashoffset: 0;
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    stroke-dashoffset: -40;
+    opacity: 0.3;
+  }
+}
+
+.anim-radar-wave {
+  animation: radarWaveDrift 3.5s linear infinite;
+}
+
+.anim-radar-wave-delayed {
+  animation: radarWaveDrift 4.5s linear infinite 0.7s;
+}
+
+@keyframes pulseGlowRing {
+  0% {
+    r: 6;
+    opacity: 1;
+  }
+  100% {
+    r: 18;
+    opacity: 0;
+  }
+}
+
+.anim-pulse-glow {
+  animation: pulseGlowRing 2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+
+@keyframes gpsDashMove {
+  to {
+    stroke-dashoffset: -52;
+  }
+}
+
+.anim-gps-dash {
+  animation: gpsDashMove 2s linear infinite;
+}
+
+/* Control Button Active Highlights */
+.hud-ctrl-btn.is-recon-active {
+  background: #00ffaa !important;
+  color: #030806 !important;
+  box-shadow: 0 0 14px rgba(0, 255, 170, 0.6);
+}
+
+.hud-ctrl-btn.is-weather-active {
+  background: #3182ce !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 14px rgba(49, 130, 206, 0.6);
+}
+
+.hud-ctrl-btn.is-faction-active {
+  background: #d69e2e !important;
+  color: #050608 !important;
+  box-shadow: 0 0 14px rgba(214, 158, 46, 0.6);
+}
+
+/* Tactical Weather & Faction Badges */
+.weather-hud-tag,
+.faction-turf-badge {
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.7));
+  cursor: default;
+}
+
+/* ==========================================================================
+   14. TACTICAL GPS ROUTE & TRIP PLANNER MODAL
+   ========================================================================== */
+.trip-planner-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(4, 5, 7, 0.78);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.trip-planner-container {
+  width: 100%;
+  max-width: 620px;
+  background: #0c0e12;
+  border: 1px solid rgba(217, 119, 54, 0.4);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(217, 119, 54, 0.12);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.trip-planner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(18, 22, 28, 0.95);
+}
+
+.trip-planner-title-block {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.trip-planner-icon {
+  color: var(--color-amber-primary);
+}
+
+.trip-planner-pre {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--color-amber-light);
+}
+
+.trip-planner-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  margin: 0;
+}
+
+.trip-planner-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.trip-planner-close-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.trip-planner-selectors-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: rgba(14, 16, 22, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.selector-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot-origin {
+  background: #00ffff;
+  box-shadow: 0 0 6px #00ffff;
+}
+
+.dot-dest {
+  background: #38a169;
+  box-shadow: 0 0 6px #38a169;
+}
+
+.trip-select-input {
+  background: #141720;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.trip-select-input:focus {
+  border-color: var(--color-amber-primary);
+}
+
+.trip-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.telemetry-card {
+  background: rgba(20, 24, 32, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.75rem;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+}
+
+.telemetry-header {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+}
+
+.telemetry-val {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+}
+
+.telemetry-sub {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 0.2rem;
+}
+
+.hazard-amber {
+  color: #d69e2e;
+}
+
+.hazard-high {
+  color: #ecc94b;
+}
+
+.hazard-critical {
+  color: #e53e3e;
+}
+
+.trip-recommendation-box {
+  margin: 0 1.5rem 1.25rem;
+  padding: 0.85rem 1rem;
+  background: rgba(217, 119, 54, 0.08);
+  border: 1px solid rgba(217, 119, 54, 0.25);
+  border-radius: 2px;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.rec-icon {
+  color: var(--color-amber-primary);
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.rec-lead {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--color-amber-light);
+  margin-bottom: 0.25rem;
+}
+
+.rec-detail {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.rec-detail strong {
+  color: #ffffff;
+}
+
+.trip-planner-footer {
+  padding: 1rem 1.5rem;
+  background: rgba(14, 16, 22, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.trip-plot-cta {
+  background: var(--color-amber-primary);
+  border: 1px solid var(--color-amber-light);
+  color: #050608;
+  font-family: var(--font-subheading);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.7rem 1.4rem;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.trip-plot-cta:hover {
+  background: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 768px) {
+  .trip-planner-selectors-grid {
+    grid-template-columns: 1fr;
+  }
+  .trip-telemetry-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
