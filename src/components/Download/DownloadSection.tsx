@@ -56,6 +56,15 @@ export const DownloadSection: React.FC<DownloadSectionProps> = () => {
 
               <div className="playtest-form-meta">
                 <span>Direct distribution via official verified portal. No spam.</span>
+                <span className="meta-sep">•</span>
+                <a
+                  href="https://samwooduis.itch.io/broken-horizon"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="itch-direct-link"
+                >
+                  Official Itch.io Page ↗
+                </a>
               </div>
             </form>
           ) : (

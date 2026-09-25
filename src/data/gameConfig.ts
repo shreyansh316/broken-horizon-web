@@ -39,7 +39,7 @@ export const gameConfig: GameConfig = {
   expansionDistrictsTarget: 41,
   worldScaleCurrentKm2: 200,
   expansionStages: "13 → 20 → 30 → 41",
-  downloadURL: "#access",
+  downloadURL: "https://samwooduis.itch.io/broken-horizon",
   trailerURL: "#trailer",
   trailerLocalPath: "/assets/videos/broken-horizon-trailer.mp4",
   trailerPosterPath: "/assets/images/trailer-poster.jpg",

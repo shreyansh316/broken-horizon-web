@@ -3,6 +3,9 @@
 > **An Open-World Action-Adventure set across fictionalized Rajasthan.**  
 > *495 miles of connected road network. No backup.*
 
+🎮 **Official Itch.io Game Page:** [https://samwooduis.itch.io/broken-horizon](https://samwooduis.itch.io/broken-horizon)  
+🌐 **Live Web Portal:** [https://broken-horizon.web.app](https://broken-horizon.web.app)
+
 ---
 
 ## 🏜️ ABOUT THE GAME

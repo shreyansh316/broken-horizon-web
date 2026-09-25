@@ -36,7 +36,7 @@ export const siteConfig: SiteConfig = {
   expansionDistrictsTarget: 41,
   worldScaleCurrentKm2: 200,
   expansionStages: "13 → 20 → 30 → 41",
-  itchUrl: "https://itch.io",
+  itchUrl: "https://samwooduis.itch.io/broken-horizon",
   trailerUrl: "#",
   discordUrl: "#",
   youtubeUrl: "#",

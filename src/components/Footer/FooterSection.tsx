@@ -55,6 +55,7 @@ export const FooterSection: React.FC<FooterSectionProps> = () => {
           <div className="footer-links-col">
             <span className="footer-heading">COMMUNITY & LEGAL</span>
             <ul className="footer-link-list">
+              <li><a href="https://samwooduis.itch.io/broken-horizon" target="_blank" rel="noopener noreferrer">Official Itch.io Hub ↗</a></li>
               <li><a href="#access">Closed Beta Dispatch</a></li>
               <li><a href="#access">Press Kit Inquiries</a></li>
               <li><a href="#hero">Privacy Policy</a></li>
