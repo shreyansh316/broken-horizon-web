@@ -18,6 +18,8 @@ import { WorldExplorer } from './components/WorldExplorer/WorldExplorer';
 import { CharacterExplorer } from './components/CharacterExplorer/CharacterExplorer';
 import { StoryBoard } from './components/StoryBoard/StoryBoard';
 import { GarageExplorer } from './components/GarageExplorer/GarageExplorer';
+import { AdminPlaytestDashboard } from './components/Playtest/AdminPlaytestDashboard';
+import { PlaytestPortal } from './components/Playtest/PlaytestPortal';
 import './styles/globals.css';
 import './styles/animations.css';
 
@@ -27,10 +29,14 @@ export function App() {
   const [hasEnteredSite, setHasEnteredSite] = useState(false);
 
   // Routing State
-  const [currentRoute, setCurrentRoute] = useState<'home' | 'world' | 'characters' | 'story' | 'garage'>(() => {
+  const [currentRoute, setCurrentRoute] = useState<
+    'home' | 'world' | 'characters' | 'story' | 'garage' | 'admin' | 'playtest'
+  >(() => {
     const path = window.location.pathname.toLowerCase();
     const hash = window.location.hash.toLowerCase();
 
+    if (path.startsWith('/admin') || hash === '#/admin' || hash === '#admin') return 'admin';
+    if (path.startsWith('/playtest') || path.startsWith('/access') || hash === '#/playtest') return 'playtest';
     if (path.startsWith('/world') || hash === '#/world' || hash === '#world-explorer') return 'world';
     if (path.startsWith('/characters') || hash === '#/characters') return 'characters';
     if (path.startsWith('/story') || hash === '#/story') return 'story';
@@ -47,7 +53,13 @@ export function App() {
       const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
 
-      if (path.startsWith('/world') || hash === '#/world' || hash === '#world-explorer') {
+      if (path.startsWith('/admin') || hash === '#/admin' || hash === '#admin') {
+        setCurrentRoute('admin');
+        document.title = 'Broken Horizon — Playtest Clearance Admin';
+      } else if (path.startsWith('/playtest') || path.startsWith('/access') || hash === '#/playtest') {
+        setCurrentRoute('playtest');
+        document.title = 'Broken Horizon — Verified Playtest Portal';
+      } else if (path.startsWith('/world') || hash === '#/world' || hash === '#world-explorer') {
         setCurrentRoute('world');
         const parts = path.split('/').filter(Boolean);
         if (parts.length >= 2) {
@@ -129,7 +141,11 @@ export function App() {
       <div className="app-vignette" aria-hidden="true" />
 
       {/* Render Dedicated Page Views */}
-      {currentRoute === 'world' ? (
+      {currentRoute === 'admin' ? (
+        <AdminPlaytestDashboard onBackToHome={navigateToHome} />
+      ) : currentRoute === 'playtest' ? (
+        <PlaytestPortal onBackToHome={navigateToHome} />
+      ) : currentRoute === 'world' ? (
         <WorldExplorer
           onBackToHome={navigateToHome}
           initialDistrictId={activeDistrictId}
