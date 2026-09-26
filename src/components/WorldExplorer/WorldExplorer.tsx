@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { ArrowLeft, Car, X, MapPin } from 'lucide-react';
+import { ArrowLeft, Car, X, MapPin, Layers, Compass, Plus, Minus, RotateCcw, Maximize2 } from 'lucide-react';
 import { TACTICAL_DISTRICTS, type TacticalDistrict } from '../../data/tacticalAtlasData';
 import '../../styles/worldExplorer.css';
 
@@ -26,9 +26,10 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
   const calculateAutoFitScale = useCallback(() => {
     if (typeof window === 'undefined') return 1;
     const w = window.innerWidth;
-    if (w < 480) return Math.max(0.42, (w - 24) / 1050);
-    if (w < 768) return Math.max(0.6, (w - 32) / 1050);
-    if (w < 1024) return Math.max(0.78, (w - 48) / 1100);
+    if (w < 480) return Math.max(0.56, (w - 16) / 680);
+    if (w < 768) return Math.max(0.68, (w - 24) / 950);
+    if (w < 1024) return Math.max(0.82, (w - 48) / 1100);
+    if (w < 1440) return Math.max(0.95, (w - 64) / 1250);
     return 1;
   }, []);
 
@@ -38,10 +39,15 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
     }
     return true;
   });
+  const [isMobileIndexOpen, setIsMobileIndexOpen] = useState<boolean>(false);
+  const [isMobileLegendOpen, setIsMobileLegendOpen] = useState<boolean>(false);
+
   const [currentScale, setCurrentScale] = useState<number>(() => calculateAutoFitScale());
   const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [touchPinchDist, setTouchPinchDist] = useState<number | null>(null);
+
   const [activeLayer, setActiveLayer] = useState<TacticalLayerType>('ALL');
   const [showPOIs, setShowPOIs] = useState<boolean>(true);
   const [useFallbackSvg, setUseFallbackSvg] = useState<boolean>(false);
@@ -65,7 +71,7 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
     );
   }, [selectedId]);
 
-  // Select district, update URL, open drawer, center camera
+  // Select district, update URL, open drawer
   const openDistrict = useCallback((id: string) => {
     const target = TACTICAL_DISTRICTS.find(
       (d) => d.id === id || d.name.toLowerCase() === id.toLowerCase()
@@ -74,6 +80,7 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
 
     setSelectedId(target.id);
     setIsDrawerOpen(true);
+    setIsMobileIndexOpen(false);
 
     if (window.history && window.history.replaceState) {
       window.history.replaceState(null, '', `/world/${target.id}`);
@@ -81,32 +88,48 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
     document.title = `BROKEN HORIZON — ${target.name} • 13 Districts • One Story`;
   }, []);
 
-  // Handle ESC key to close drawer
+  // Keyboard navigation & accessibility controls (+, -, R, ESC)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
       if (e.key === 'Escape') {
         setIsDrawerOpen(false);
+        setIsMobileIndexOpen(false);
+        setIsMobileLegendOpen(false);
+      } else if (e.key === '+' || e.key === '=') {
+        e.preventDefault();
+        setCurrentScale((s) => Math.min(2.6, s + 0.2));
+      } else if (e.key === '-' || e.key === '_') {
+        e.preventDefault();
+        setCurrentScale((s) => Math.max(0.42, s - 0.2));
+      } else if (e.key === 'r' || e.key === 'R') {
+        e.preventDefault();
+        setCurrentScale(calculateAutoFitScale());
+        setPan({ x: 0, y: 0 });
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [calculateAutoFitScale]);
 
-  // Handle initialDistrictId change
+  // Handle initialDistrictId change from routing or props
+  const prevInitialIdRef = useRef(initialDistrictId);
   useEffect(() => {
-    if (initialDistrictId) {
+    if (initialDistrictId && initialDistrictId !== prevInitialIdRef.current) {
+      prevInitialIdRef.current = initialDistrictId;
       const found = TACTICAL_DISTRICTS.find(
         (d) =>
           d.id === initialDistrictId.toLowerCase() ||
           d.name.toLowerCase() === initialDistrictId.toLowerCase()
       );
-      if (found && found.id !== selectedId) {
+      if (found) {
         openDistrict(found.id);
       }
     }
-  }, [initialDistrictId, openDistrict, selectedId]);
+  }, [initialDistrictId, openDistrict]);
 
-  // Pan & Zoom controls (Mouse)
+  // Pan controls (Mouse)
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return;
     setIsDragging(true);
@@ -125,36 +148,59 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
     setIsDragging(false);
   };
 
-  // Touch Pan controls (Mobile & Tablet)
+  // Touch Pan & Pinch-Zoom controls (Mobile & Tablet)
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 1) {
       setIsDragging(true);
       setDragStart({ x: e.touches[0].clientX - pan.x, y: e.touches[0].clientY - pan.y });
+      setTouchPinchDist(null);
+    } else if (e.touches.length === 2) {
+      setIsDragging(false);
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      setTouchPinchDist(dist);
     }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    setPan({
-      x: e.touches[0].clientX - dragStart.x,
-      y: e.touches[0].clientY - dragStart.y,
-    });
+    if (e.touches.length === 1 && isDragging) {
+      setPan({
+        x: e.touches[0].clientX - dragStart.x,
+        y: e.touches[0].clientY - dragStart.y,
+      });
+    } else if (e.touches.length === 2 && touchPinchDist !== null) {
+      const newDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const factor = newDist / touchPinchDist;
+      setCurrentScale((s) => Math.min(2.6, Math.max(0.42, s * factor)));
+      setTouchPinchDist(newDist);
+    }
   };
 
   const handleTouchEnd = () => {
     setIsDragging(false);
+    setTouchPinchDist(null);
   };
 
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     const delta = e.deltaY < 0 ? 0.12 : -0.12;
-    setCurrentScale((prev) => Math.min(2.6, Math.max(0.85, prev + delta)));
+    setCurrentScale((prev) => Math.min(2.6, Math.max(0.42, prev + delta)));
   };
 
   const handleResetZoom = () => {
     setCurrentScale(calculateAutoFitScale());
     setPan({ x: 0, y: 0 });
     setIsDrawerOpen(false);
+  };
+
+  const handleFitRajasthan = () => {
+    setCurrentScale(calculateAutoFitScale());
+    setPan({ x: 0, y: 0 });
   };
 
   const handleZoom = (val: number) => {
@@ -165,12 +211,12 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
     <div
       className="tactical-atlas-root ocean-slate-root"
       role="main"
-      aria-label="Broken Horizon — Illustrated 3D-Relief Rajasthan Collector's Map"
+      aria-label="Broken Horizon — Illustrated 3D-Relief Rajasthan Game World Map"
     >
       {/* ===================================================================== */}
       {/* 1. TOP-LEFT BRANDING & STORY EPIGRAPH (MATCHES REFERENCE ART)         */}
       {/* ===================================================================== */}
-      <div className="hud-corner-top-left">
+      <header className="hud-corner-top-left" role="banner">
         <div className="hud-top-nav-links">
           <button
             type="button"
@@ -181,9 +227,14 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
             <ArrowLeft size={12} />
             <span>← MAIN PORTAL</span>
           </button>
-          <a href="/garage" className="hud-nav-btn garage-btn" title="View 92-Vehicle Master Catalog">
+          <a
+            href="/garage"
+            className="hud-nav-btn garage-btn"
+            title="View 92-Vehicle Master Transport Division"
+            aria-label="View 92-Vehicle Master Transport Division"
+          >
             <Car size={12} />
-            <span>🚗 92-VEHICLE GARAGE</span>
+            <span>🚗 TRANSPORT DIVISION</span>
           </a>
         </div>
         <h1 className="hud-game-title">BROKEN HORIZON</h1>
@@ -195,45 +246,90 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
           Same truth.
           <br />A broken horizon.
         </p>
-      </div>
+
+        {/* Mobile & Tablet HUD Drawer Toggle Buttons */}
+        <div className="hud-mobile-pill-toggles">
+          <button
+            type="button"
+            className={`hud-mobile-toggle-btn ${isMobileIndexOpen ? 'is-active' : ''}`}
+            onClick={() => {
+              setIsMobileIndexOpen(!isMobileIndexOpen);
+              setIsMobileLegendOpen(false);
+            }}
+            aria-label="Toggle 13 Districts Index"
+          >
+            <Layers size={13} />
+            <span>13 DISTRICTS</span>
+          </button>
+          <button
+            type="button"
+            className={`hud-mobile-toggle-btn ${isMobileLegendOpen ? 'is-active' : ''}`}
+            onClick={() => {
+              setIsMobileLegendOpen(!isMobileLegendOpen);
+              setIsMobileIndexOpen(false);
+            }}
+            aria-label="Toggle Cartography Legend"
+          >
+            <Compass size={13} />
+            <span>LEGEND</span>
+          </button>
+        </div>
+      </header>
 
       {/* ===================================================================== */}
       {/* 2. TOP-RIGHT "THE 13 DISTRICTS" CLICKABLE INDEX PANEL                 */}
       {/* ===================================================================== */}
       <aside
-        className="hud-corner-top-right"
+        id="hud-districts-index"
+        className={`hud-corner-top-right ${isMobileIndexOpen ? 'mobile-visible' : ''}`}
         role="region"
         aria-label="The 13 Rajasthan Districts Index"
       >
         <div className="hud-index-header">
           <span>THE 13 DISTRICTS</span>
-          <span className="hud-index-badge">CLICK PIN</span>
+          <span className="hud-index-badge">CLICK TO INSPECT</span>
         </div>
         <div className="hud-index-list">
-          {TACTICAL_DISTRICTS.map((d) => (
-            <button
-              key={d.id}
-              type="button"
-              onClick={() => openDistrict(d.id)}
-              className={`hud-index-item ${d.id === selectedId ? 'is-selected' : ''}`}
-            >
-              <span
-                style={{ backgroundColor: d.color }}
-                className="hud-index-dot"
+          {TACTICAL_DISTRICTS.map((d) => {
+            const isJaipur = d.id === 'jaipur';
+            return (
+              <button
+                key={d.id}
+                type="button"
+                id={`index-item-${d.numInt}`}
+                onClick={() => openDistrict(d.id)}
+                className={`hud-index-item ${d.id === selectedId ? 'is-selected' : ''}`}
+                aria-label={`Inspect ${d.name} (${isJaipur ? 'Active Story Region' : 'Locked World Concept'})`}
               >
-                {d.numInt}
-              </span>
-              <span className="hud-index-text">{d.label}</span>
-            </button>
-          ))}
+                <span
+                  style={{ backgroundColor: d.color }}
+                  className="hud-index-dot"
+                >
+                  {d.numInt}
+                </span>
+                <span className="hud-index-text">{d.label}</span>
+                {isJaipur ? (
+                  <span className="hud-index-tag active">ACTIVE</span>
+                ) : (
+                  <span className="hud-index-tag locked">LOCKED</span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </aside>
 
       {/* ===================================================================== */}
       {/* 3. BOTTOM-LEFT CARTOGRAPHY LEGEND & KM SCALE BAR                      */}
       {/* ===================================================================== */}
-      <div className="hud-corner-bottom-left">
+      <aside
+        id="hud-cartography-legend"
+        className={`hud-corner-bottom-left ${isMobileLegendOpen ? 'mobile-visible' : ''}`}
+        role="region"
+        aria-label="Cartography Legend and Scale"
+      >
         <div className="hud-legend-box">
+          <div className="hud-legend-title">CARTOGRAPHY LEGEND</div>
           <div className="hud-legend-item">
             <span>🏙️</span>
             <span>Major City</span>
@@ -278,7 +374,7 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
 
         {/* Compass Rose + 0–100 km Scale Bar */}
         <div className="hud-scale-box">
-          <div className="hud-compass-rose">
+          <div className="hud-compass-rose" aria-label="Compass Rose">
             <span className="compass-n">N</span>
             <span className="compass-s">S</span>
             <span className="compass-w">W</span>
@@ -302,23 +398,56 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
             <div className="hud-scale-caption">(Game Scale — Approx.)</div>
           </div>
         </div>
-      </div>
+      </aside>
 
       {/* ===================================================================== */}
-      {/* 4. BOTTOM-CENTER PILLAR TAGLINE & ZOOM CONTROLS                       */}
+      {/* 4. BOTTOM-CENTER PILLAR TAGLINE & FULL INTERACTIVE CONTROLS          */}
       {/* ===================================================================== */}
-      <div className="hud-bottom-center-ctrls">
+      <div className="hud-bottom-center-ctrls" role="toolbar" aria-label="Map Navigation Controls">
         <div className="hud-zoom-pill">
-          <button type="button" onClick={() => handleZoom(1)}>
-            100%
+          <button
+            type="button"
+            id="map-btn-zoom-out"
+            onClick={() => handleZoom(currentScale - 0.2)}
+            title="Zoom Out (-)"
+            aria-label="Zoom Out"
+          >
+            <Minus size={12} style={{ display: 'inline', marginRight: 2 }} />
+            OUT
           </button>
-          <span style={{ opacity: 0.2 }}>|</span>
-          <button type="button" onClick={() => handleZoom(currentScale + 0.35)}>
-            ZOOM +
+          <span className="ctrl-divider">|</span>
+          <button
+            type="button"
+            id="map-btn-fit"
+            onClick={handleFitRajasthan}
+            title="Fit Rajasthan to Screen"
+            aria-label="Fit Rajasthan"
+          >
+            <Maximize2 size={12} style={{ display: 'inline', marginRight: 2 }} />
+            FIT RAJASTHAN
           </button>
-          <span style={{ opacity: 0.2 }}>|</span>
-          <button type="button" onClick={handleResetZoom} className="is-reset">
-            RESET MAP
+          <span className="ctrl-divider">|</span>
+          <button
+            type="button"
+            id="map-btn-zoom-in"
+            onClick={() => handleZoom(currentScale + 0.2)}
+            title="Zoom In (+)"
+            aria-label="Zoom In"
+          >
+            <Plus size={12} style={{ display: 'inline', marginRight: 2 }} />
+            IN
+          </button>
+          <span className="ctrl-divider">|</span>
+          <button
+            type="button"
+            id="map-btn-reset"
+            onClick={handleResetZoom}
+            className="is-reset"
+            title="Reset Map View (R)"
+            aria-label="Reset Map"
+          >
+            <RotateCcw size={12} style={{ display: 'inline', marginRight: 2 }} />
+            RESET (R)
           </button>
         </div>
         <div className="hud-pillar-motto">
@@ -329,11 +458,11 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
       {/* ===================================================================== */}
       {/* 5. BOTTOM-RIGHT INDIA LOCATOR & "THE WORLD" INSET BOX                 */}
       {/* ===================================================================== */}
-      <div className="hud-corner-bottom-right">
+      <aside className="hud-corner-bottom-right" role="complementary" aria-label="The World Overview">
         <div className="hud-locator-grid">
           {/* Mini India Map Silhouette with Rajasthan Highlighted */}
           <div className="hud-india-mini-map">
-            <svg viewBox="0 0 120 130" className="india-svg-box">
+            <svg viewBox="0 0 120 130" className="india-svg-box" aria-label="India locator silhouette with Rajasthan highlighted">
               {/* Simplified India Silhouette */}
               <path
                 d="M45 8 L62 12 L68 28 L88 38 L108 35 L112 52 L92 62 L82 78 L62 122 L48 122 L35 82 L18 65 L15 45 L35 28 Z"
@@ -366,7 +495,7 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
             </p>
           </div>
         </div>
-      </div>
+      </aside>
 
       {/* ===================================================================== */}
       {/* 6. MAIN INTERACTIVE ILLUSTRATED 3D-RELIEF MAP CANVAS                  */}
@@ -402,15 +531,37 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
           <span className="neighbor-territory-label label-mp">MADHYA PRADESH</span>
           <span className="neighbor-territory-label label-gujarat">GUJARAT</span>
 
-          {/* Illustrated Rajasthan Base Map Image */}
+          {/* Illustrated 3D-Relief Rajasthan Base Map with Responsive Picture Derivatives */}
           {!useFallbackSvg && (
-            <img
-              id="base-map-img"
-              src="/assets/rajasthan-illustrated-map.png"
-              alt="Broken Horizon — 13 Districts of Rajasthan Map"
-              onError={() => setUseFallbackSvg(true)}
-              className="base-map-img"
-            />
+            <picture className="base-map-picture">
+              <source
+                media="(min-width: 1920px)"
+                srcSet="/assets/world/rajasthan-relief-master.webp"
+                type="image/webp"
+              />
+              <source
+                media="(min-width: 1024px)"
+                srcSet="/assets/world/rajasthan-relief-desktop.webp"
+                type="image/webp"
+              />
+              <source
+                media="(min-width: 640px)"
+                srcSet="/assets/world/rajasthan-relief-tablet.webp"
+                type="image/webp"
+              />
+              <source
+                srcSet="/assets/world/rajasthan-relief-mobile.webp"
+                type="image/webp"
+              />
+              <img
+                id="base-map-img"
+                src="/assets/world/rajasthan-relief-desktop.webp"
+                alt="Broken Horizon — Illustrated 3D-Relief Rajasthan Game World Map"
+                onError={() => setUseFallbackSvg(true)}
+                className="base-map-img"
+                loading="eager"
+              />
+            </picture>
           )}
 
           {/* Multi-Biome Illustrated SVG Fallback with Topographical Layers */}
@@ -520,30 +671,49 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
 
           {/* INTERACTIVE 13 NUMBERED DISTRICT PINS OVERLAY */}
           <div id="interactive-pins-layer" className="interactive-pins-layer">
-            {TACTICAL_DISTRICTS.map((d) => (
-              <div
-                key={d.id}
-                onClick={() => openDistrict(d.id)}
-                style={{ left: `${d.xPct}%`, top: `${d.yPct}%` }}
-                className="map-pin-anchor"
-                role="button"
-                tabIndex={0}
-                aria-label={`Inspect ${d.name}`}
-              >
-                <div className="map-pin-pill">
-                  <span
-                    style={{ backgroundColor: d.color, color: '#ffffff' }}
-                    className="map-pin-num-circle pin-pulse"
-                  >
-                    {d.numInt}
-                  </span>
-                  <span className="map-pin-name">{d.name}</span>
+            {TACTICAL_DISTRICTS.map((d) => {
+              const isJaipur = d.id === 'jaipur';
+              const isSelected = d.id === selectedId;
+              return (
+                <div
+                  key={d.id}
+                  id={`district-marker-${d.numInt}`}
+                  data-district-id={d.id}
+                  data-district-num={d.numInt}
+                  data-district-status={isJaipur ? 'ACTIVE' : 'LOCKED'}
+                  onClick={() => openDistrict(d.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      openDistrict(d.id);
+                    }
+                  }}
+                  style={{ left: `${d.xPct}%`, top: `${d.yPct}%` }}
+                  className={`map-pin-anchor ${isJaipur ? 'is-active-region' : 'is-future-region'} ${isSelected ? 'is-selected' : ''}`}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`District ${d.numInt}: ${d.name} (${isJaipur ? 'Active Story Region' : 'Locked World Concept'})`}
+                >
+                  <div className={`map-pin-pill ${isJaipur ? 'pill-active' : 'pill-future'}`}>
+                    <span
+                      style={{ backgroundColor: d.color, color: '#ffffff' }}
+                      className={`map-pin-num-circle ${isJaipur ? 'pin-pulse active-pulse' : ''}`}
+                    >
+                      {d.numInt}
+                    </span>
+                    <span className="map-pin-name">{d.name}</span>
+                    {isJaipur ? (
+                      <span className="pin-status-tag tag-active">ACTIVE</span>
+                    ) : (
+                      <span className="pin-status-tag tag-future">LOCKED</span>
+                    )}
+                  </div>
+                  {isJaipur && (
+                    <span className="story-start-ribbon">STORY STARTS HERE // ACTIVE</span>
+                  )}
                 </div>
-                {d.storyStart && (
-                  <span className="story-start-ribbon">STORY STARTS HERE</span>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </main>
@@ -568,7 +738,7 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
             </span>
             <div>
               <div id="drawer-rto" className="drawer-rto-label">
-                DISTRICT #{activeDistrict.numInt} // RTO {activeDistrict.rto}
+                DISTRICT #{activeDistrict.num} // RTO {activeDistrict.rto}
               </div>
               <h2 id="drawer-title" className="drawer-title-text">
                 {activeDistrict.name}
@@ -586,6 +756,20 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
         </div>
 
         <div className="drawer-body-scroll">
+          {/* Status Badge */}
+          <div className="drawer-status-strip">
+            {activeDistrict.id === 'jaipur' ? (
+              <span className="status-badge-active">
+                ● ACTIVE // CURRENT PLAYABLE REGION
+              </span>
+            ) : (
+              <span className="status-badge-locked">
+                🔒 REGISTERED // FUTURE REGION (LOCKED)
+              </span>
+            )}
+            <span className="status-region-tag">{activeDistrict.region}</span>
+          </div>
+
           {/* Full Unclipped Quote with word-break and overflow-wrap */}
           <blockquote id="drawer-quote" className="drawer-quote-callout">
             &ldquo;{activeDistrict.quote}&rdquo;
@@ -642,17 +826,22 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
             </div>
           </div>
 
-          {/* District Fleet Spawns */}
+          {/* District Fleet Spawns & Transport Connection */}
           <div className="drawer-vehicles-card">
             <div className="drawer-vehicles-top">
               <span>SIGNATURE DISTRICT VEHICLE SPAWNS</span>
-              <a href="/garage" className="drawer-garage-link">
-                VIEW ALL 92 →
+              <a href="/garage" className="drawer-garage-link" aria-label="View all 92 vehicles in Transport Division">
+                TRANSPORT // VIEW ALL 92 →
               </a>
             </div>
             <div id="drawer-vehicles" className="drawer-vehicles-list">
               {activeDistrict.vehicles}
             </div>
+            {activeDistrict.id !== 'jaipur' && (
+              <p className="drawer-vehicle-disclaimer">
+                * Conceptual showcase vehicle tags for future world regions.
+              </p>
+            )}
           </div>
         </div>
       </aside>
@@ -674,3 +863,5 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
     </div>
   );
 };
+
+export default WorldExplorer;

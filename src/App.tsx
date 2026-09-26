@@ -40,8 +40,8 @@ export function App() {
 
     if (path.startsWith('/admin') || hash === '#/admin' || hash === '#admin') return 'admin';
     if (path.startsWith('/playtest') || path.startsWith('/access') || hash === '#/playtest' || hash === '#/access' || hash === '#access') return 'playtest';
-    if (path.startsWith('/world') || hash === '#/world' || hash === '#world-explorer') return 'world';
-    if (path.startsWith('/characters') || hash === '#/characters') return 'characters';
+    if (path.startsWith('/world') || hash.startsWith('#/world') || hash === '#world-explorer') return 'world';
+    if (path.startsWith('/characters') || hash.startsWith('#/characters')) return 'characters';
     if (path.startsWith('/story') || hash === '#/story') return 'story';
     if (path.startsWith('/garage') || hash === '#/garage' || hash === '#garage-lab' || hash === '#transport') return 'garage';
     if (path.startsWith('/development') || hash === '#/development' || hash === '#development') return 'development';
@@ -65,11 +65,11 @@ export function App() {
       } else if (path.startsWith('/playtest') || path.startsWith('/access') || hash === '#/playtest' || hash === '#/access' || hash === '#access') {
         setCurrentRoute('playtest');
         document.title = 'Broken Horizon — Verified Playtest Portal';
-      } else if (path.startsWith('/world') || hash === '#/world' || hash === '#world-explorer') {
+      } else if (path.startsWith('/world') || hash.startsWith('#/world') || hash === '#world-explorer') {
         setCurrentRoute('world');
-        const parts = path.split('/').filter(Boolean);
-        if (parts.length >= 2) {
-          setActiveDistrictId(parts[1]);
+        const rawParts = (hash.startsWith('#/world') ? hash.replace('#', '') : path).split('/').filter(Boolean);
+        if (rawParts.length >= 2) {
+          setActiveDistrictId(rawParts[1]);
         }
         document.title = 'Broken Horizon — The World';
       } else if (path.startsWith('/characters') || hash === '#/characters') {
