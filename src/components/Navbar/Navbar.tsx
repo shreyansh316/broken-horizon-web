@@ -66,7 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'GAME', href: '#gameplay', sectionId: 'gameplay' },
     { label: 'WORLD', href: '/world', sectionId: 'world' },
     { label: 'THE ROAD', href: '#the-road', sectionId: 'the-road' },
-    { label: 'GARAGE', href: '/garage', sectionId: 'garage' },
+    { label: 'TRANSPORT', href: '/garage', sectionId: 'garage' },
     { label: 'OPERATIVES', href: '#characters', sectionId: 'characters' },
     { label: 'MEDIA', href: '#media', sectionId: 'media' },
     { label: 'DEVELOPMENT', href: '/development', sectionId: 'development' },
@@ -83,7 +83,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       if (el) el.scrollIntoView({ behavior: 'smooth' });
       return;
     }
-    if (link.label === 'GARAGE' && onNavigateToGarage) {
+    if ((link.label === 'GARAGE' || link.label === 'TRANSPORT') && onNavigateToGarage) {
       onNavigateToGarage();
       return;
     }

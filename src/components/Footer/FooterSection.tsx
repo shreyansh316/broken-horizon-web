@@ -35,9 +35,9 @@ export const FooterSection: React.FC<FooterSectionProps> = () => {
             <ul className="footer-link-list">
               <li><a href="#gameplay">Gameplay Pillars</a></li>
               <li><a href="#world">The 13 Districts</a></li>
-              <li><a href="#the-road">The 495-Mile Highway</a></li>
+              <li><a href="#the-road">The 800-KM Highway Network</a></li>
               <li><a href="#characters">The Operatives</a></li>
-              <li><a href="/garage">Mehta Garage Customizer</a></li>
+              <li><a href="/garage">Transport Division Fleet</a></li>
             </ul>
           </div>
 

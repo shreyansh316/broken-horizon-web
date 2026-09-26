@@ -17,7 +17,7 @@ import { FooterSection } from './components/Footer/FooterSection';
 import { WorldExplorer } from './components/WorldExplorer/WorldExplorer';
 import { CharacterExplorer } from './components/CharacterExplorer/CharacterExplorer';
 import { StoryBoard } from './components/StoryBoard/StoryBoard';
-import { GarageExplorer } from './components/GarageExplorer/GarageExplorer';
+import { TransportDivision } from './components/TransportDivision/TransportDivision';
 import { AdminPlaytestDashboard } from './components/Playtest/AdminPlaytestDashboard';
 import { PlaytestPortal } from './components/Playtest/PlaytestPortal';
 import { DevelopmentDashboard } from './components/Development/DevelopmentDashboard';
@@ -82,9 +82,9 @@ export function App() {
       } else if (path.startsWith('/story') || hash === '#/story') {
         setCurrentRoute('story');
         document.title = 'Broken Horizon — Investigation Board & Story';
-      } else if (path.startsWith('/garage') || hash === '#/garage' || hash === '#garage-lab') {
+      } else if (path.startsWith('/garage') || hash === '#/garage' || hash === '#garage-lab' || hash === '#transport') {
         setCurrentRoute('garage');
-        document.title = 'Broken Horizon — Mehta Garage Tuning Lab';
+        document.title = 'Broken Horizon — Transport Division';
       } else if (path.startsWith('/development') || hash === '#/development' || hash === '#development') {
         setCurrentRoute('development');
         document.title = 'Broken Horizon — Development Status';
@@ -136,7 +136,7 @@ export function App() {
   const navigateToGarage = () => {
     setCurrentRoute('garage');
     window.history.pushState(null, '', '/garage');
-    document.title = 'Broken Horizon — Mehta Garage Tuning Lab';
+    document.title = 'Broken Horizon — Transport Division';
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
@@ -186,7 +186,7 @@ export function App() {
           onNavigateToCharacters={() => navigateToCharacters('arjun-mehta')}
         />
       ) : currentRoute === 'garage' ? (
-        <GarageExplorer
+        <TransportDivision
           onBackToHome={navigateToHome}
           onNavigateToWorld={() => navigateToWorld('jaipur')}
         />
@@ -215,7 +215,10 @@ export function App() {
 
           {/* Main Continuous Cinematic Homepage */}
           <main id="main-content">
-            <Hero onOpenTrailerModal={() => setIsTrailerModalOpen(true)} />
+            <Hero
+              onOpenTrailerModal={() => setIsTrailerModalOpen(true)}
+              onNavigateToGarage={navigateToGarage}
+            />
             <TrailerSection onOpenTrailerModal={() => setIsTrailerModalOpen(true)} />
             <CharacterSection
               onNavigateToCharacters={(cId) => navigateToCharacters(cId)}
