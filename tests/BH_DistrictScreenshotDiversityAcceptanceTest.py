@@ -38,7 +38,7 @@ def run_tests():
     all_images = []
     
     for i, g in enumerate(galleries):
-        images = re.findall(r'"([^"]+)"', g)
+        images = re.findall(r'"(/assets/[^"]+)"', g)
         all_images.extend(images)
         
         district = districts[i] if i < len(districts) else "unknown"

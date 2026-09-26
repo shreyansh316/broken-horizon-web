@@ -9,17 +9,19 @@
 .legal-content-container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 120px 2rem 4rem;
+  padding: clamp(80px, 12vh, 120px) clamp(1rem, 4vw, 2rem) 4rem;
   flex-grow: 1;
+  width: 100%;
 }
 
 .legal-title {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(1.6rem, 5vw, 4rem);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.5rem;
   color: #ffffff;
+  word-break: break-word;
 }
 
 .legal-date {

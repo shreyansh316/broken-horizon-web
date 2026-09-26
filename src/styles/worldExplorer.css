@@ -1,553 +1,787 @@
 /* ==========================================================================
-   BROKEN HORIZON — TACTICAL WORLD ATLAS & TOPOGRAPHICAL MAP STYLES
-   Rockstar / Ubisoft AAA In-Game Cartography System
+   BROKEN HORIZON — ILLUSTRATED 3D-RELIEF RAJASTHAN GAME MAP STYLES
+   Ubisoft Far Cry / Assassin's Creed / Rockstar Games Collector's Map
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   Root Container & Base
+   Root Container & Ocean Slate Background
    -------------------------------------------------------------------------- */
-.tactical-atlas-root {
-  width: 100vw;
+.tactical-atlas-root,
+.ocean-slate-root {
+  width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-color: #050609;
-  color: #e5e7eb;
-  display: flex;
-  flex-direction: column;
+  background-color: #071018;
+  background: radial-gradient(circle at 50% 48%, #102030 0%, #071018 70%, #04080d 100%);
+  color: #f3f4f6;
+  position: relative;
   user-select: none;
   font-family: 'Inter', sans-serif;
-  position: relative;
 }
 
 /* --------------------------------------------------------------------------
-   Radar Grid Canvas Background
+   Pulsing Pin Halo Keyframe Animation
    -------------------------------------------------------------------------- */
-.radar-grid-bg {
-  background-color: #05070b;
-  background-image:
-    radial-gradient(circle at 50% 50%, rgba(234, 88, 12, 0.08) 0%, transparent 70%),
-    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 100% 100%, 40px 40px, 40px 40px;
-}
-
-/* --------------------------------------------------------------------------
-   Keyframe Animations
-   -------------------------------------------------------------------------- */
-@keyframes pulse-ring {
+@keyframes pulse-halo {
   0% {
-    transform: scale(0.9);
-    opacity: 0.9;
+    transform: scale(1);
+    opacity: 0.85;
   }
   100% {
-    transform: scale(2.1);
+    transform: scale(2.2);
     opacity: 0;
   }
 }
 
-.pulse-node {
-  animation: pulse-ring 2.2s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
-  transform-origin: center;
-  transform-box: fill-box;
-}
-
-@keyframes dash-flow {
-  to {
-    stroke-dashoffset: -40;
-  }
-}
-
-.corridor-flow {
-  stroke-dasharray: 8 6;
-  animation: dash-flow 1.8s linear infinite;
-}
-
-@keyframes poi-glow {
-  0%, 100% {
-    opacity: 0.85;
-    r: 5px;
-  }
-  50% {
-    opacity: 1;
-    r: 6.5px;
-  }
-}
-
-.poi-pulse-pin {
-  animation: poi-glow 2s ease-in-out infinite;
-}
-
-/* --------------------------------------------------------------------------
-   Top Telemetry Header
-   -------------------------------------------------------------------------- */
-.tactical-header {
-  height: 56px;
-  flex-shrink: 0;
-  background: rgba(8, 10, 15, 0.96);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  z-index: 40;
-  backdrop-filter: blur(12px);
-}
-
-.tactical-nav-left {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.back-home-button {
-  padding: 0.375rem 0.75rem;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #d1d5db;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  transition: all 0.2s ease;
-}
-
-.back-home-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  border-color: rgba(234, 88, 12, 0.5);
-}
-
-.tactical-brand-title {
-  font-family: 'Oswald', sans-serif;
-  font-size: 1.125rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #ffffff;
-  line-height: 1;
-}
-
-.tactical-brand-subtitle {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: #ea580c;
-  letter-spacing: 0.14em;
-  margin-top: 2px;
-}
-
-.tactical-search-wrap {
-  width: 24rem;
+.pin-pulse {
   position: relative;
 }
 
-.tactical-search-input {
-  width: 100%;
-  background: #0c0f17;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
-  padding: 0.45rem 0.85rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: #ffffff;
-  outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+.pin-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  animation: pulse-halo 2s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+  pointer-events: none;
 }
 
-.tactical-search-input::placeholder {
-  color: #6b7280;
+/* --------------------------------------------------------------------------
+   1. TOP-LEFT BRANDING & STORY EPIGRAPH BLOCK
+   -------------------------------------------------------------------------- */
+.hud-corner-top-left {
+  position: fixed;
+  top: 1.25rem;
+  left: 1.5rem;
+  z-index: 30;
+  pointer-events: auto;
 }
 
-.tactical-search-input:focus {
-  border-color: #ea580c;
-  box-shadow: 0 0 12px rgba(234, 88, 12, 0.25);
-}
-
-.tactical-nav-right {
+.hud-top-nav-links {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  margin-bottom: 0.6rem;
 }
 
-.garage-link-btn {
-  padding: 0.375rem 0.75rem;
+.hud-nav-btn {
+  padding: 0.3rem 0.65rem;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #fb923c;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #d1d5db;
   text-decoration: none;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   gap: 0.35rem;
+  cursor: pointer;
 }
 
-.garage-link-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #ea580c;
-  color: #ffffff;
-}
-
-.play-prologue-btn {
-  padding: 0.375rem 0.85rem;
-  border-radius: 4px;
+.hud-nav-btn:hover {
   background: #ea580c;
   color: #000000;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: background 0.2s ease, transform 0.1s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.play-prologue-btn:hover {
-  background: #f97316;
-}
-
-/* --------------------------------------------------------------------------
-   Single-Row Compact Tactical Layer Switcher
-   -------------------------------------------------------------------------- */
-.tactical-layers-bar {
-  height: 44px;
-  flex-shrink: 0;
-  background: #0a0d14;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  overflow-x: auto;
-  z-index: 30;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-}
-
-.tactical-layer-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-}
-
-.tactical-layer-label {
-  color: #6b7280;
-  margin-right: 0.25rem;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-}
-
-.layer-btn {
-  padding: 0.25rem 0.65rem;
-  border-radius: 3px;
-  border: 1px solid transparent;
-  background: rgba(255, 255, 255, 0.04);
-  color: #d1d5db;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-}
-
-.layer-btn:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.layer-btn.is-active {
-  background: #ea580c;
-  color: #000000;
-  font-weight: 700;
   border-color: #ea580c;
-  box-shadow: 0 0 10px rgba(234, 88, 12, 0.3);
-}
-
-.tactical-legend-group {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: #9ca3af;
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  flex-shrink: 0;
-}
-
-.legend-chip {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.legend-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.legend-dot.orange {
-  background-color: #ea580c;
-  box-shadow: 0 0 6px #ea580c;
-}
-
-.legend-dot.red {
-  background-color: #ef4444;
-  box-shadow: 0 0 6px #ef4444;
-}
-
-.legend-dot.blue {
-  background-color: #38bdf8;
-  box-shadow: 0 0 6px #38bdf8;
-}
-
-/* --------------------------------------------------------------------------
-   Main Interactive Map Stage
-   -------------------------------------------------------------------------- */
-.tactical-stage {
-  flex: 1;
-  position: relative;
-  display: flex;
-  overflow: hidden;
-}
-
-.tactical-viewport {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Top-Left Live Coordinate Telemetry Overlay */
-.hud-telemetry-box {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  z-index: 20;
-  pointer-events: none;
-  background: rgba(4, 6, 10, 0.85);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 0.75rem 0.95rem;
-  border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  line-height: 1.5;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-}
-
-.hud-telemetry-box .hud-line-highlight {
-  color: #fb923c;
   font-weight: 700;
-  letter-spacing: 0.05em;
 }
 
-.hud-telemetry-box .hud-line-dim {
-  color: #9ca3af;
-}
-
-.hud-telemetry-box .hud-val-white {
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.hud-telemetry-box .hud-val-accent {
-  color: #34d399;
-  font-weight: 600;
-}
-
-/* Bottom Map Controls */
-.map-hud-controls {
-  position: absolute;
-  bottom: 1.25rem;
-  left: 1.25rem;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.map-ctrl-btn {
-  height: 32px;
-  background: rgba(0, 0, 0, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #e5e7eb;
-  border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(6px);
-}
-
-.map-ctrl-btn:hover {
-  border-color: #ea580c;
-  color: #ffffff;
-  box-shadow: 0 0 8px rgba(234, 88, 12, 0.3);
-}
-
-.map-ctrl-btn.icon-square {
-  width: 32px;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.map-ctrl-btn.text-pill {
-  padding: 0 0.75rem;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-}
-
-.poi-toggle-active {
-  background: rgba(234, 88, 12, 0.18) !important;
-  border-color: #ea580c !important;
-  color: #fdba74 !important;
-  font-weight: 700 !important;
-}
-
-/* Interactive SVG Canvas */
-.rajasthan-svg-canvas {
-  width: 100%;
-  height: 100%;
-  max-width: 1250px;
-  max-height: 820px;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: grab;
-}
-
-.rajasthan-svg-canvas:active {
-  cursor: grabbing;
-}
-
-/* --------------------------------------------------------------------------
-   Right-Hand Tactical District Dossier Drawer
-   -------------------------------------------------------------------------- */
-.tactical-dossier-drawer {
-  width: 430px;
-  flex-shrink: 0;
-  background: #090c13;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  z-index: 30;
-  overflow-y: auto;
-}
-
-/* District Visual Banner Header */
-.dossier-banner-header {
-  position: relative;
-  height: 160px;
-  width: 100%;
-  background: #111622;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.dossier-banner-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  opacity: 0.7;
-  filter: contrast(125%) brightness(90%);
-}
-
-.dossier-banner-gradient {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, #090c13 0%, rgba(9, 12, 19, 0.45) 55%, transparent 100%);
-}
-
-.dossier-banner-badges {
-  position: absolute;
-  top: 0.75rem;
-  left: 1rem;
-  right: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-}
-
-.dossier-code-pill {
-  padding: 0.2rem 0.5rem;
-  border-radius: 3px;
-  background: rgba(0, 0, 0, 0.85);
+.hud-nav-btn.garage-btn {
+  border-color: rgba(234, 88, 12, 0.4);
   color: #fb923c;
-  border: 1px solid rgba(234, 88, 12, 0.4);
-  font-weight: 600;
-  letter-spacing: 0.05em;
 }
 
-.dossier-status-pill {
-  padding: 0.2rem 0.5rem;
-  border-radius: 3px;
-  background: rgba(16, 185, 129, 0.18);
-  color: #6ee7b7;
-  border: 1px solid rgba(16, 185, 129, 0.4);
-  font-weight: 700;
-  letter-spacing: 0.05em;
+.hud-nav-btn.garage-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
 }
 
-.dossier-banner-titles {
-  position: absolute;
-  bottom: 0.75rem;
-  left: 1rem;
-  right: 1rem;
-}
-
-.dossier-region-subtitle {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.dossier-district-name {
+.hud-game-title {
   font-family: 'Oswald', sans-serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  line-height: 1.1;
+  color: #ffffff;
+  line-height: 1;
+  text-shadow: 0 4px 14px rgba(0, 0, 0, 0.9);
   margin: 0;
 }
 
-/* Dossier Body Content */
-.dossier-body {
+.hud-title-divider {
+  height: 3px;
+  width: 16rem;
+  background: linear-gradient(to right, #ea580c, #f59e0b, transparent);
+  margin: 0.4rem 0;
+}
+
+.hud-game-subtitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  color: #e5e7eb;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.hud-game-epigraph {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: rgba(209, 213, 219, 0.9);
+  line-height: 1.5;
+  max-width: 250px;
+  margin-top: 0.6rem;
+}
+
+/* --------------------------------------------------------------------------
+   2. TOP-RIGHT "THE 13 DISTRICTS" INDEX PANEL
+   -------------------------------------------------------------------------- */
+.hud-corner-top-right {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 30;
+  width: 13.5rem;
+  background: rgba(9, 19, 28, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 0.85rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+}
+
+.hud-index-header {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #e5e7eb;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hud-index-badge {
+  font-size: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #ea580c;
+  font-weight: 700;
+}
+
+.hud-index-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.hud-index-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.hud-index-item:hover,
+.hud-index-item.is-selected {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hud-index-item.is-selected .hud-index-text {
+  color: #fb923c;
+  font-weight: 700;
+}
+
+.hud-index-dot {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: bold;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.hud-index-text {
+  font-size: 0.75rem;
+  color: #d1d5db;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s ease;
+}
+
+.hud-index-item:hover .hud-index-text {
+  color: #fb923c;
+}
+
+/* --------------------------------------------------------------------------
+   3. BOTTOM-LEFT CARTOGRAPHY LEGEND & KM SCALE BAR
+   -------------------------------------------------------------------------- */
+.hud-corner-bottom-left {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 1.5rem;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: auto;
+}
+
+.hud-legend-box {
+  width: 13.5rem;
+  background: rgba(9, 19, 28, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 0.85rem;
+  font-size: 11px;
+  color: #d1d5db;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+}
+
+.hud-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.hud-line-sample-road {
+  width: 16px;
+  height: 2px;
+  background: #f59e0b;
+  display: inline-block;
+}
+
+.hud-line-sample-hw {
+  width: 16px;
+  height: 4px;
+  border-top: 1px solid #ea580c;
+  border-bottom: 1px solid #ea580c;
+  background: #facc15;
+  display: inline-block;
+}
+
+.hud-line-sample-border {
+  width: 16px;
+  border-bottom: 1.5px dashed #ffffff;
+  opacity: 0.7;
+  display: inline-block;
+}
+
+/* Compass & KM Scale Bar Container */
+.hud-scale-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(9, 19, 28, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.hud-compass-rose {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: #d1d5db;
+}
+
+.compass-n {
+  position: absolute;
+  top: -2px;
+  color: #ea580c;
+  font-weight: bold;
+}
+
+.compass-s {
+  position: absolute;
+  bottom: -2px;
+}
+
+.compass-w {
+  position: absolute;
+  left: 2px;
+}
+
+.compass-e {
+  position: absolute;
+  right: 2px;
+}
+
+.compass-star {
+  color: #ea580c;
+  font-size: 14px;
+}
+
+.hud-scale-ruler {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: #d1d5db;
+}
+
+.hud-scale-numbers {
+  display: flex;
+  justify-content: space-between;
+  width: 9rem;
+  margin-bottom: 2px;
+}
+
+.hud-scale-bar {
+  width: 9rem;
+  height: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+}
+
+.hud-scale-segment-filled {
+  width: 25%;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.hud-scale-segment-empty {
+  width: 25%;
+  background: transparent;
+}
+
+.hud-scale-caption {
+  font-size: 8px;
+  color: #9ca3af;
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   4. BOTTOM-CENTER PILLAR TAGLINE & ZOOM CONTROLS
+   -------------------------------------------------------------------------- */
+.hud-bottom-center-ctrls {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+.hud-zoom-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(9, 19, 28, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+
+.hud-zoom-pill button {
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  cursor: pointer;
+  padding: 0 0.4rem;
+  transition: color 0.15s ease;
+}
+
+.hud-zoom-pill button:hover {
+  color: #ea580c;
+}
+
+.hud-zoom-pill button.is-reset {
+  color: #ea580c;
+  font-weight: bold;
+}
+
+.hud-pillar-motto {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(0.75rem, 1vw, 0.875rem);
+  letter-spacing: 0.28em;
+  color: #e5e7eb;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  padding: 0.25rem 1rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   5. BOTTOM-RIGHT INDIA LOCATOR & "THE WORLD" INSET BOX
+   -------------------------------------------------------------------------- */
+.hud-corner-bottom-right {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 30;
+  width: 20rem;
+  background: rgba(9, 19, 28, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+
+.hud-locator-grid {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  padding: 0.75rem;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.hud-india-mini-map {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding-right: 0.5rem;
+}
+
+.india-svg-box {
+  width: 5.5rem;
+  height: 5.5rem;
+}
+
+.india-tagline {
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: #f59e0b;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+.hud-world-lore {
+  font-size: 10px;
+  color: #d1d5db;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.world-lore-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  color: #ffffff;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.world-lore-highlight {
+  color: #fde68a;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   6. MAIN INTERACTIVE MAP CANVAS STAGE
+   -------------------------------------------------------------------------- */
+.map-canvas-stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.map-canvas-stage:active {
+  cursor: grabbing;
+}
+
+.map-canvas-container {
+  position: relative;
+  width: 1280px;
+  height: 820px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
+}
+
+/* Neighboring Territory Labels */
+.neighbor-territory-label {
+  position: absolute;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: rgba(148, 163, 184, 0.45);
+  pointer-events: none;
+  user-select: none;
+}
+
+.label-pakistan {
+  top: 22%;
+  left: 18%;
+}
+
+.label-haryana {
+  top: 9%;
+  right: 23%;
+}
+
+.label-up {
+  top: 18%;
+  right: 16%;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.label-mp {
+  bottom: 34%;
+  right: 11%;
+}
+
+.label-gujarat {
+  bottom: 10%;
+  left: 22%;
+}
+
+/* Base Map Image */
+.base-map-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.85));
+}
+
+/* Illustrated Relief Fallback SVG */
+.fallback-relief-svg {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.85));
+}
+
+/* Interactive Pins Layer */
+.interactive-pins-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+}
+
+.map-pin-anchor {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.map-pin-anchor:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+  z-index: 25;
+}
+
+.map-pin-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(7, 16, 24, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 0.2rem 0.55rem 0.2rem 0.25rem;
+  border-radius: 9999px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
+  transition: all 0.2s ease;
+}
+
+.map-pin-anchor:hover .map-pin-pill {
+  background: #000000;
+  border-color: #ea580c;
+  box-shadow: 0 0 16px rgba(234, 88, 12, 0.4);
+}
+
+.map-pin-num-circle {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.map-pin-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.story-start-ribbon {
+  margin-top: 0.25rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  background: #dc2626;
+  color: #ffffff;
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.5);
+  border: 1px solid rgba(254, 202, 202, 0.4);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   7. SLIDE-OVER DISTRICT INSPECTION DRAWER
+   -------------------------------------------------------------------------- */
+.district-slide-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  max-width: 420px;
+  background: rgba(8, 17, 25, 0.96);
+  backdrop-filter: blur(16px);
+  border-left: 1px solid rgba(234, 88, 12, 0.4);
+  z-index: 40;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -15px 0 40px rgba(0, 0, 0, 0.85);
+}
+
+.district-slide-drawer.is-open {
+  transform: translateX(0);
+}
+
+.drawer-header {
   padding: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.drawer-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.drawer-num-badge {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.drawer-rto-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #fb923c;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.drawer-title-text {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 1;
+  margin: 0;
+}
+
+.drawer-close-btn {
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e5e7eb;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.drawer-close-btn:hover {
+  background: #ea580c;
+  color: #000000;
+  border-color: #ea580c;
+}
+
+.drawer-body-scroll {
+  padding: 1.25rem;
+  overflow-y: auto;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  flex: 1;
 }
 
-/* Fixed Full Quote (NO CLIPPING, NO OVERFLOW) */
-.dossier-quote-box {
+/* Full unclipped quote with word-break and overflow-wrap */
+.drawer-quote-callout {
   border-left: 2px solid #ea580c;
-  padding-left: 0.875rem;
+  padding-left: 0.85rem;
   padding-top: 0.15rem;
   padding-bottom: 0.15rem;
   font-size: 0.8125rem;
   font-style: italic;
-  color: #fdba74;
+  color: #fde68a;
   line-height: 1.6;
   word-break: break-word;
   overflow-wrap: break-word;
@@ -555,68 +789,49 @@
   margin: 0;
 }
 
-/* Narrative Synopsis */
-.dossier-synopsis {
+.drawer-synopsis-text {
   font-size: 0.775rem;
   color: #d1d5db;
   line-height: 1.55;
   margin: 0;
 }
 
-/* 4 Tactical Game Telemetry Cards */
-.dossier-telemetry-grid {
+.drawer-intel-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.625rem;
+  gap: 0.65rem;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
 }
 
-.telemetry-card {
+.intel-metric-card {
   padding: 0.75rem;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  transition: border-color 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.telemetry-card:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.telemetry-card-label {
-  font-size: 10px;
-  color: #6b7280;
+.intel-metric-label {
+  font-size: 9px;
+  color: #9ca3af;
   letter-spacing: 0.06em;
 }
 
-.telemetry-card-val {
+.intel-metric-val {
   font-weight: 700;
   margin-top: 2px;
   line-height: 1.3;
 }
 
-.telemetry-card-val.red {
-  color: #f87171;
+.intel-metric-val.white {
+  color: #ffffff;
 }
 
-.telemetry-card-val.orange {
+.intel-metric-val.orange {
   color: #fb923c;
 }
 
-.telemetry-card-val.white {
-  color: #f3f4f6;
-}
-
-.telemetry-card-val.emerald {
-  color: #34d399;
-}
-
-/* Local Sector POIs */
-.pois-section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.drawer-pois-header {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   color: #fb923c;
@@ -625,82 +840,43 @@
   margin-bottom: 0.5rem;
 }
 
-.pois-list {
+.drawer-pois-list {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.poi-card {
-  padding: 0.75rem;
+.drawer-poi-pill {
+  padding: 0.65rem;
   border-radius: 4px;
-  background: #0e131f;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.poi-card:hover {
-  border-color: rgba(234, 88, 12, 0.6);
-  background: #111726;
-  transform: translateY(-1px);
-}
-
-.poi-card.is-highlighted {
-  border-color: #ea580c;
-  background: rgba(234, 88, 12, 0.12);
-  box-shadow: 0 0 14px rgba(234, 88, 12, 0.25);
-}
-
-.poi-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  gap: 0.5rem;
-}
-
-.poi-card-name {
-  color: #38bdf8;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-}
-
-.poi-card-type {
-  color: #fb923c;
-  font-size: 9px;
-  letter-spacing: 0.05em;
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.poi-card-desc {
   font-size: 11px;
-  color: #9ca3af;
-  margin-top: 0.35rem;
-  line-height: 1.45;
+  color: #e5e7eb;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  line-height: 1.4;
 }
 
-/* Native Fleet Spawns */
-.fleet-spawns-card {
+.drawer-vehicles-card {
   padding: 0.85rem;
   border-radius: 6px;
-  background: #0d111a;
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.fleet-spawns-header {
+.drawer-vehicles-top {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   color: #9ca3af;
   margin-bottom: 0.4rem;
 }
 
-.fleet-garage-link {
+.drawer-garage-link {
   color: #fb923c;
   text-decoration: none;
   font-weight: 700;
@@ -708,95 +884,16 @@
   transition: color 0.15s ease;
 }
 
-.fleet-garage-link:hover {
+.drawer-garage-link:hover {
   color: #ffffff;
   text-decoration: underline;
 }
 
-.fleet-spawns-list {
+.drawer-vehicles-list {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: #f3f4f6;
+  color: #ffffff;
   line-height: 1.45;
-}
-
-/* --------------------------------------------------------------------------
-   Bottom 13-District Transit Corridor Bar
-   -------------------------------------------------------------------------- */
-.transit-corridor-footer {
-  height: 80px;
-  flex-shrink: 0;
-  background: #07090e;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0 1.25rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  z-index: 40;
-}
-
-.transit-footer-eyebrow {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  margin-bottom: 0.4rem;
-}
-
-.transit-carousel-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
-
-.transit-district-btn {
-  padding: 0.5rem 0.85rem;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: #0d1018;
-  color: #9ca3af;
-  text-align: left;
-  flex-shrink: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.18s ease;
-}
-
-.transit-district-btn:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #ffffff;
-  background: #121622;
-}
-
-.transit-district-btn.is-selected {
-  background: rgba(234, 88, 12, 0.18);
-  border-color: #ea580c;
-  color: #ffffff;
-  box-shadow: 0 0 16px rgba(234, 88, 12, 0.2);
-}
-
-.transit-btn-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: #6b7280;
-}
-
-.transit-district-btn.is-selected .transit-btn-num {
-  color: #fb923c;
-  font-weight: bold;
-}
-
-.transit-btn-name {
-  font-family: 'Oswald', sans-serif;
-  font-size: 0.875rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-weight: 700;
 }
 
 /* --------------------------------------------------------------------------
@@ -808,7 +905,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #07090e;
+  background: #071018;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -817,53 +914,79 @@
 }
 
 /* --------------------------------------------------------------------------
-   Mobile & Tablet Responsive Overrides
+   Responsive Layout Adjustments
    -------------------------------------------------------------------------- */
+@media (max-width: 1280px) {
+  .hud-corner-bottom-right {
+    display: none;
+  }
+}
+
 @media (max-width: 1024px) {
-  .tactical-stage {
-    flex-direction: column;
+  .hud-corner-bottom-left {
+    display: none;
   }
-
-  .tactical-dossier-drawer {
-    width: 100%;
-    height: 380px;
-    border-left: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .tactical-search-wrap {
-    width: 16rem;
-  }
-
-  .tactical-legend-group {
+  .hud-corner-top-right {
     display: none;
   }
 }
 
 @media (max-width: 768px) {
-  .tactical-search-wrap {
-    display: none;
-  }
-
-  .tactical-header {
-    padding: 0 0.75rem;
-  }
-
-  .tactical-layers-bar {
-    padding: 0 0.75rem;
-  }
-
-  .hud-telemetry-box {
-    display: none;
-  }
-
-  .map-hud-controls {
-    bottom: 0.75rem;
+  .hud-corner-top-left {
+    top: 0.75rem;
     left: 0.75rem;
+    right: 0.75rem;
   }
-
-  .transit-corridor-footer {
-    padding: 0 0.75rem;
-    height: 70px;
+  .hud-game-epigraph {
+    display: none;
+  }
+  .hud-game-title {
+    font-size: clamp(1.4rem, 5vw, 2rem);
+  }
+  .hud-title-divider {
+    width: 100%;
+    max-width: 12rem;
+  }
+  .district-slide-drawer {
+    max-width: 100%;
+    width: 100%;
+  }
+  .drawer-close-btn {
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .drawer-intel-grid {
+    grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .hud-top-nav-links {
+    gap: 0.4rem;
+  }
+  .hud-nav-btn {
+    font-size: 9px;
+    padding: 0.25rem 0.5rem;
+  }
+  .hud-game-subtitle {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+  }
+}
+
+/* Transit corridor footer */
+.transit-corridor-footer {
+  height: 60px;
+  background: rgba(7, 16, 24, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  z-index: 35;
+}
+

@@ -2,13 +2,13 @@
   min-height: 100vh;
   background-color: #08090a;
   color: #fff;
-  padding: 80px 24px;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(1rem, 4vw, 1.5rem);
   font-family: 'Inter', sans-serif;
 }
 
 .dev-dashboard-header {
   max-width: 1200px;
-  margin: 0 auto 60px auto;
+  margin: 0 auto clamp(2rem, 5vh, 4rem) auto;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 24px;
 }
@@ -24,8 +24,9 @@
   letter-spacing: 0.1em;
   cursor: pointer;
   padding: 0;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   transition: color 0.3s ease;
+  min-height: 40px;
 }
 
 .back-btn:hover {
@@ -34,16 +35,17 @@
 
 .dev-header-titles h2 {
   font-family: 'Playfair Display', serif;
-  font-size: 2.5rem;
+  font-size: clamp(1.4rem, 5vw, 2.5rem);
   font-weight: 700;
   letter-spacing: 0.05em;
   margin: 0 0 8px 0;
   text-transform: uppercase;
+  word-break: break-word;
 }
 
 .dev-subtitle {
-  font-size: 0.85rem;
-  letter-spacing: 0.15em;
+  font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+  letter-spacing: 0.12em;
   color: #a0a0a0;
   display: block;
 }
@@ -53,7 +55,7 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 60px;
+  gap: clamp(2rem, 5vh, 4rem);
 }
 
 /* Honesty Banner */
@@ -62,7 +64,7 @@
   gap: 16px;
   background-color: rgba(255, 85, 0, 0.05);
   border-left: 4px solid #ff5500;
-  padding: 24px;
+  padding: clamp(1rem, 3vw, 1.5rem);
   border-radius: 4px;
 }
 
@@ -83,8 +85,8 @@
 .dev-features-section h3,
 .dev-timeline-section h3 {
   font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
-  margin-bottom: 32px;
+  font-size: clamp(1.35rem, 4vw, 1.8rem);
+  margin-bottom: 24px;
   letter-spacing: 0.05em;
   color: #fff;
 }
@@ -100,14 +102,19 @@
   font-size: 0.8rem;
   letter-spacing: 0.1em;
   font-weight: 600;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .meter-bar {
   font-family: monospace;
-  font-size: 1.2rem;
+  font-size: clamp(0.7rem, 3.2vw, 1.2rem);
   letter-spacing: -1px;
   color: #ff5500;
   line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .text-amber {
@@ -221,7 +228,7 @@
 /* Features Grid */
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
   gap: 16px;
 }
 

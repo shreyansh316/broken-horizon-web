@@ -856,3 +856,26 @@
     padding: 1rem;
   }
 }
+
+@media (max-width: 480px) {
+  .evidence-modal-window {
+    width: 96vw;
+  }
+
+  .modal-dossier-body {
+    padding: 1.25rem 1rem;
+  }
+
+  .modal-evidence-title {
+    font-size: clamp(1.25rem, 5vw, 1.6rem);
+  }
+
+  .story-lead {
+    font-size: 0.82rem;
+  }
+
+  .story-mode-toggle {
+    scale: 0.8;
+    transform-origin: right center;
+  }
+}

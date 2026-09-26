@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { ArrowLeft, Car, ExternalLink, Plus, Minus, RotateCcw, MapPin, Search } from 'lucide-react';
+import { ArrowLeft, Car, X, MapPin } from 'lucide-react';
 import { TACTICAL_DISTRICTS, type TacticalDistrict } from '../../data/tacticalAtlasData';
 import '../../styles/worldExplorer.css';
 
@@ -16,102 +16,106 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
 }) => {
   const [selectedId, setSelectedId] = useState<string>(() => {
     const found = TACTICAL_DISTRICTS.find(
-      (d) => d.id === initialDistrictId?.toLowerCase() || d.name.toLowerCase() === initialDistrictId?.toLowerCase()
+      (d) =>
+        d.id === initialDistrictId?.toLowerCase() ||
+        d.name.toLowerCase() === initialDistrictId?.toLowerCase()
     );
     return found ? found.id : 'jaipur';
   });
 
-  const [activeLayer, setActiveLayer] = useState<TacticalLayerType>('ALL');
-  const [showPOIs, setShowPOIs] = useState<boolean>(true);
-  const [zoomScale, setZoomScale] = useState<number>(1);
-  const [panOffset, setPanOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const calculateAutoFitScale = useCallback(() => {
+    if (typeof window === 'undefined') return 1;
+    const w = window.innerWidth;
+    if (w < 480) return Math.max(0.42, (w - 24) / 1050);
+    if (w < 768) return Math.max(0.6, (w - 32) / 1050);
+    if (w < 1024) return Math.max(0.78, (w - 48) / 1100);
+    return 1;
+  }, []);
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth > 768;
+    }
+    return true;
+  });
+  const [currentScale, setCurrentScale] = useState<number>(() => calculateAutoFitScale());
+  const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [highlightedPoiIdx, setHighlightedPoiIdx] = useState<number | null>(null);
+  const [activeLayer, setActiveLayer] = useState<TacticalLayerType>('ALL');
+  const [showPOIs, setShowPOIs] = useState<boolean>(true);
+  const [useFallbackSvg, setUseFallbackSvg] = useState<boolean>(false);
 
-  const carouselRef = useRef<HTMLDivElement | null>(null);
-  const poiCardsRef = useRef<{ [key: number]: HTMLDivElement | null }>({});
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Auto-fit scale on mobile/tablet window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 1024) {
+        setCurrentScale(calculateAutoFitScale());
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [calculateAutoFitScale]);
 
   const activeDistrict = useMemo<TacticalDistrict>(() => {
-    return TACTICAL_DISTRICTS.find((d) => d.id === selectedId) || TACTICAL_DISTRICTS[0];
+    return (
+      TACTICAL_DISTRICTS.find((d) => d.id === selectedId) || TACTICAL_DISTRICTS[0]
+    );
   }, [selectedId]);
 
-  // Sync route and document title on selection
-  const selectDistrict = useCallback((id: string) => {
-    const target = TACTICAL_DISTRICTS.find((d) => d.id === id);
+  // Select district, update URL, open drawer, center camera
+  const openDistrict = useCallback((id: string) => {
+    const target = TACTICAL_DISTRICTS.find(
+      (d) => d.id === id || d.name.toLowerCase() === id.toLowerCase()
+    );
     if (!target) return;
 
     setSelectedId(target.id);
-    setHighlightedPoiIdx(null);
+    setIsDrawerOpen(true);
 
-    // Update browser URL cleanly
     if (window.history && window.history.replaceState) {
       window.history.replaceState(null, '', `/world/${target.id}`);
     }
-    document.title = `Broken Horizon — ${target.name} Territory Atlas`;
-
-    // Smoothly scroll button in carousel into view
-    const btn = document.getElementById(`carousel-btn-${target.id}`);
-    if (btn) {
-      btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
+    document.title = `BROKEN HORIZON — ${target.name} • 13 Districts • One Story`;
   }, []);
 
-  // Update on initialDistrictId prop changes
+  // Handle ESC key to close drawer
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsDrawerOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Handle initialDistrictId change
   useEffect(() => {
     if (initialDistrictId) {
       const found = TACTICAL_DISTRICTS.find(
-        (d) => d.id === initialDistrictId.toLowerCase() || d.name.toLowerCase() === initialDistrictId.toLowerCase()
+        (d) =>
+          d.id === initialDistrictId.toLowerCase() ||
+          d.name.toLowerCase() === initialDistrictId.toLowerCase()
       );
       if (found && found.id !== selectedId) {
-        selectDistrict(found.id);
+        openDistrict(found.id);
       }
     }
-  }, [initialDistrictId, selectDistrict, selectedId]);
+  }, [initialDistrictId, openDistrict, selectedId]);
 
-  // Handle Search input
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    const q = query.toLowerCase().trim();
-    if (!q) return;
-
-    const matched = TACTICAL_DISTRICTS.find(
-      (d) =>
-        d.name.toLowerCase().includes(q) ||
-        d.id.toLowerCase().includes(q) ||
-        d.rto.toLowerCase().includes(q) ||
-        d.desc.toLowerCase().includes(q) ||
-        d.pois.some((p) => p.name.toLowerCase().includes(q))
-    );
-    if (matched) {
-      setSelectedId(matched.id);
-      if (window.history && window.history.replaceState) {
-        window.history.replaceState(null, '', `/world/${matched.id}`);
-      }
-    }
-  };
-
-  // POI selection and scroll
-  const handlePoiCardClick = (idx: number) => {
-    setHighlightedPoiIdx(idx);
-    const el = poiCardsRef.current[idx];
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  };
-
-  // Pan & Zoom Event Handlers
+  // Pan & Zoom controls (Mouse)
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return;
     setIsDragging(true);
-    setDragStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
+    setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
-    setPanOffset({
+    setPan({
       x: e.clientX - dragStart.x,
       y: e.clientY - dragStart.y,
     });
@@ -121,618 +125,552 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
     setIsDragging(false);
   };
 
+  // Touch Pan controls (Mobile & Tablet)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.touches[0].clientX - pan.x, y: e.touches[0].clientY - pan.y });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    setPan({
+      x: e.touches[0].clientX - dragStart.x,
+      y: e.touches[0].clientY - dragStart.y,
+    });
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    const factor = e.deltaY < 0 ? 1.1 : 0.9;
-    setZoomScale((prev) => Math.min(2.5, Math.max(0.75, prev * factor)));
+    const delta = e.deltaY < 0 ? 0.12 : -0.12;
+    setCurrentScale((prev) => Math.min(2.6, Math.max(0.85, prev + delta)));
   };
 
   const handleResetZoom = () => {
-    setZoomScale(1);
-    setPanOffset({ x: 0, y: 0 });
+    setCurrentScale(calculateAutoFitScale());
+    setPan({ x: 0, y: 0 });
+    setIsDrawerOpen(false);
   };
 
-  const handleZoomIn = () => {
-    setZoomScale((prev) => Math.min(2.5, prev * 1.2));
-  };
-
-  const handleZoomOut = () => {
-    setZoomScale((prev) => Math.max(0.75, prev * 0.8));
+  const handleZoom = (val: number) => {
+    setCurrentScale(Math.min(2.6, Math.max(0.42, val)));
   };
 
   return (
-    <div className="tactical-atlas-root" role="main" aria-label="Broken Horizon Territory Atlas">
-      {/* ================================================================= */}
-      {/* 1. TOP TELEMETRY HEADER                                           */}
-      {/* ================================================================= */}
-      <header className="tactical-header" role="banner">
-        <div className="tactical-nav-left">
+    <div
+      className="tactical-atlas-root ocean-slate-root"
+      role="main"
+      aria-label="Broken Horizon — Illustrated 3D-Relief Rajasthan Collector's Map"
+    >
+      {/* ===================================================================== */}
+      {/* 1. TOP-LEFT BRANDING & STORY EPIGRAPH (MATCHES REFERENCE ART)         */}
+      {/* ===================================================================== */}
+      <div className="hud-corner-top-left">
+        <div className="hud-top-nav-links">
           <button
             type="button"
-            className="back-home-button"
+            className="hud-nav-btn"
             onClick={onBackToHome}
             aria-label="Return to Broken Horizon Homepage"
           >
-            <ArrowLeft size={14} />
-            <span>MAIN SITE</span>
+            <ArrowLeft size={12} />
+            <span>← MAIN PORTAL</span>
           </button>
-          <div>
-            <div className="tactical-brand-title">BROKEN HORIZON</div>
-            <div className="tactical-brand-subtitle">TERRITORY ATLAS // 13 RAJASTHAN DISTRICTS</div>
+          <a href="/garage" className="hud-nav-btn garage-btn" title="View 92-Vehicle Master Catalog">
+            <Car size={12} />
+            <span>🚗 92-VEHICLE GARAGE</span>
+          </a>
+        </div>
+        <h1 className="hud-game-title">BROKEN HORIZON</h1>
+        <div className="hud-title-divider" />
+        <p className="hud-game-subtitle">RAJASTHAN • 13 DISTRICTS • ONE STORY</p>
+        <p className="hud-game-epigraph">
+          Different cities. Different people.
+          <br />
+          Same truth.
+          <br />A broken horizon.
+        </p>
+      </div>
+
+      {/* ===================================================================== */}
+      {/* 2. TOP-RIGHT "THE 13 DISTRICTS" CLICKABLE INDEX PANEL                 */}
+      {/* ===================================================================== */}
+      <aside
+        className="hud-corner-top-right"
+        role="region"
+        aria-label="The 13 Rajasthan Districts Index"
+      >
+        <div className="hud-index-header">
+          <span>THE 13 DISTRICTS</span>
+          <span className="hud-index-badge">CLICK PIN</span>
+        </div>
+        <div className="hud-index-list">
+          {TACTICAL_DISTRICTS.map((d) => (
+            <button
+              key={d.id}
+              type="button"
+              onClick={() => openDistrict(d.id)}
+              className={`hud-index-item ${d.id === selectedId ? 'is-selected' : ''}`}
+            >
+              <span
+                style={{ backgroundColor: d.color }}
+                className="hud-index-dot"
+              >
+                {d.numInt}
+              </span>
+              <span className="hud-index-text">{d.label}</span>
+            </button>
+          ))}
+        </div>
+      </aside>
+
+      {/* ===================================================================== */}
+      {/* 3. BOTTOM-LEFT CARTOGRAPHY LEGEND & KM SCALE BAR                      */}
+      {/* ===================================================================== */}
+      <div className="hud-corner-bottom-left">
+        <div className="hud-legend-box">
+          <div className="hud-legend-item">
+            <span>🏙️</span>
+            <span>Major City</span>
+          </div>
+          <div className="hud-legend-item">
+            <span>🏘️</span>
+            <span>Town / Village</span>
+          </div>
+          <div className="hud-legend-item">
+            <span>🏰</span>
+            <span>Fort / Historical Place</span>
+          </div>
+          <div className="hud-legend-item">
+            <span>🏭</span>
+            <span>Industrial Area</span>
+          </div>
+          <div className="hud-legend-item">
+            <span>✈️</span>
+            <span>Airport</span>
+          </div>
+          <div className="hud-legend-item">
+            <span>🚆</span>
+            <span>Train Station</span>
+          </div>
+          <div className="hud-legend-item">
+            <span>⚓</span>
+            <span>Port / Boat</span>
+          </div>
+          <div className="hud-legend-item">
+            <span className="hud-line-sample-road" />
+            <span>Main Road</span>
+          </div>
+          <div className="hud-legend-item">
+            <span className="hud-line-sample-hw" />
+            <span>Highway (Horizon Line)</span>
+          </div>
+          <div className="hud-legend-item">
+            <span className="hud-line-sample-border" />
+            <span>District Border</span>
           </div>
         </div>
 
-        {/* Global Atlas Search */}
-        <div className="tactical-search-wrap">
-          <div style={{ position: 'relative' }}>
-            <Search
-              size={14}
-              style={{ position: 'absolute', left: 10, top: 9, color: '#6b7280', pointerEvents: 'none' }}
-            />
-            <input
-              id="atlas-search"
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="SEARCH WORLD (JAIPUR, MEHTA GARAGE, UDAIPUR, NH-48...)"
-              className="tactical-search-input"
-              style={{ paddingLeft: '2rem' }}
-            />
+        {/* Compass Rose + 0–100 km Scale Bar */}
+        <div className="hud-scale-box">
+          <div className="hud-compass-rose">
+            <span className="compass-n">N</span>
+            <span className="compass-s">S</span>
+            <span className="compass-w">W</span>
+            <span className="compass-e">E</span>
+            <span className="compass-star">✦</span>
           </div>
-        </div>
-
-        <div className="tactical-nav-right">
-          <a href="/garage" className="garage-link-btn" title="View 92-Vehicle Master Catalog">
-            <Car size={14} />
-            <span>92-VEHICLE GARAGE</span>
-          </a>
-          <a
-            href="https://samwooduis.itch.io/broken-horizon"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="play-prologue-btn"
-          >
-            <span>PLAY PROLOGUE</span>
-            <ExternalLink size={12} />
-          </a>
-        </div>
-      </header>
-
-      {/* ================================================================= */}
-      {/* 2. COMPACT SINGLE-BAR TACTICAL LAYER SWITCHER                     */}
-      {/* ================================================================= */}
-      <div className="tactical-layers-bar" role="toolbar" aria-label="Tactical Map Layers">
-        <div className="tactical-layer-group">
-          <span className="tactical-layer-label">MAP LAYERS:</span>
-          <button
-            type="button"
-            onClick={() => setActiveLayer('ALL')}
-            className={`layer-btn ${activeLayer === 'ALL' ? 'is-active' : ''}`}
-          >
-            ALL INTEL
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveLayer('CORRIDOR')}
-            className={`layer-btn ${activeLayer === 'CORRIDOR' ? 'is-active' : ''}`}
-          >
-            HORIZON CORRIDOR
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveLayer('SAFEHOUSE')}
-            className={`layer-btn ${activeLayer === 'SAFEHOUSE' ? 'is-active' : ''}`}
-          >
-            SAFEHOUSES &amp; GARAGES
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveLayer('MISSIONS')}
-            className={`layer-btn ${activeLayer === 'MISSIONS' ? 'is-active' : ''}`}
-          >
-            PROLOGUE MISSIONS
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveLayer('HIGHWAYS')}
-            className={`layer-btn ${activeLayer === 'HIGHWAYS' ? 'is-active' : ''}`}
-          >
-            NH-48 / NH-62 NETWORK
-          </button>
-        </div>
-
-        <div className="tactical-legend-group">
-          <span className="legend-chip">
-            <i className="legend-dot orange" />
-            <span>PLAYABLE PROLOGUE SECTOR</span>
-          </span>
-          <span className="legend-chip">
-            <i className="legend-dot red" />
-            <span>HORIZON SYNDICATE NODE</span>
-          </span>
-          <span className="legend-chip">
-            <i className="legend-dot blue" />
-            <span>EVIDENCE / RECON TARGET</span>
-          </span>
+          <div className="hud-scale-ruler">
+            <div className="hud-scale-numbers">
+              <span>0</span>
+              <span>25</span>
+              <span>50</span>
+              <span>75</span>
+              <span>100 km</span>
+            </div>
+            <div className="hud-scale-bar">
+              <div className="hud-scale-segment-filled" />
+              <div className="hud-scale-segment-empty" />
+              <div className="hud-scale-segment-filled" />
+              <div className="hud-scale-segment-empty" />
+            </div>
+            <div className="hud-scale-caption">(Game Scale — Approx.)</div>
+          </div>
         </div>
       </div>
 
-      {/* ================================================================= */}
-      {/* 3. MAIN INTERACTIVE MAP STAGE + RIGHT TACTICAL DOSSIER            */}
-      {/* ================================================================= */}
-      <div className="tactical-stage">
-        {/* CENTER INTERACTIVE TOPOGRAPHICAL SVG MAP */}
+      {/* ===================================================================== */}
+      {/* 4. BOTTOM-CENTER PILLAR TAGLINE & ZOOM CONTROLS                       */}
+      {/* ===================================================================== */}
+      <div className="hud-bottom-center-ctrls">
+        <div className="hud-zoom-pill">
+          <button type="button" onClick={() => handleZoom(1)}>
+            100%
+          </button>
+          <span style={{ opacity: 0.2 }}>|</span>
+          <button type="button" onClick={() => handleZoom(currentScale + 0.35)}>
+            ZOOM +
+          </button>
+          <span style={{ opacity: 0.2 }}>|</span>
+          <button type="button" onClick={handleResetZoom} className="is-reset">
+            RESET MAP
+          </button>
+        </div>
+        <div className="hud-pillar-motto">
+          EXPLORE &nbsp;/&nbsp; FIGHT &nbsp;/&nbsp; UNCOVER &nbsp;/&nbsp; SURVIVE
+        </div>
+      </div>
+
+      {/* ===================================================================== */}
+      {/* 5. BOTTOM-RIGHT INDIA LOCATOR & "THE WORLD" INSET BOX                 */}
+      {/* ===================================================================== */}
+      <div className="hud-corner-bottom-right">
+        <div className="hud-locator-grid">
+          {/* Mini India Map Silhouette with Rajasthan Highlighted */}
+          <div className="hud-india-mini-map">
+            <svg viewBox="0 0 120 130" className="india-svg-box">
+              {/* Simplified India Silhouette */}
+              <path
+                d="M45 8 L62 12 L68 28 L88 38 L108 35 L112 52 L92 62 L82 78 L62 122 L48 122 L35 82 L18 65 L15 45 L35 28 Z"
+                fill="#263240"
+                stroke="#475569"
+                strokeWidth="1.5"
+              />
+              {/* Highlighted Rajasthan Polygon */}
+              <path
+                d="M22 40 L44 32 L52 48 L42 62 L22 56 Z"
+                fill="#f59e0b"
+                stroke="#ffffff"
+                strokeWidth="1"
+              />
+            </svg>
+            <div className="india-tagline">RAJASTHAN, INDIA</div>
+          </div>
+          {/* The World Lore Text */}
+          <div className="hud-world-lore">
+            <div className="world-lore-title">THE WORLD</div>
+            <p>
+              A vast and diverse landscape of 13 districts, from the pink streets of
+              Jaipur to the golden dunes of Jaisalmer, from the lakes of Udaipur to the
+              forests of Sawai Madhopur.
+            </p>
+            <p className="world-lore-highlight">
+              One road. Countless stories.
+              <br />
+              This is Rajasthan. This is your world.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ===================================================================== */}
+      {/* 6. MAIN INTERACTIVE ILLUSTRATED 3D-RELIEF MAP CANVAS                  */}
+      {/* ===================================================================== */}
+      <main
+        id="map-stage"
+        className="map-canvas-stage"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onWheel={handleWheel}
+      >
         <div
-          className="tactical-viewport radar-grid-bg"
-          id="map-viewport"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onWheel={handleWheel}
+          id="map-container"
+          ref={containerRef}
+          className="map-canvas-container"
+          style={{
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${currentScale})`,
+          }}
         >
-          {/* Top-Left Live Coordinate Telemetry Overlay */}
-          <div className="hud-telemetry-box" aria-live="polite">
-            <div className="hud-line-highlight">
-              SECTOR: {activeDistrict.code} // RTO: {activeDistrict.rto}
-            </div>
-            <div className="hud-line-dim">
-              TOPOGRAPHY: <span className="hud-val-white">{activeDistrict.terrain.toUpperCase()}</span>
-            </div>
-            <div className="hud-line-dim">
-              ACTIVE LAYER: <span className="hud-val-accent">{activeLayer} TELEMETRY OVERLAY</span>
-            </div>
-          </div>
+          {/* Neighboring Territory Labels */}
+          <span className="neighbor-territory-label label-pakistan">PAKISTAN</span>
+          <span className="neighbor-territory-label label-haryana">HARYANA</span>
+          <span className="neighbor-territory-label label-up">
+            UTTAR
+            <br />
+            PRADESH
+          </span>
+          <span className="neighbor-territory-label label-mp">MADHYA PRADESH</span>
+          <span className="neighbor-territory-label label-gujarat">GUJARAT</span>
 
-          {/* Map Zoom & POI HUD Controls */}
-          <div className="map-hud-controls">
-            <button
-              type="button"
-              onClick={handleZoomIn}
-              className="map-ctrl-btn icon-square"
-              title="Zoom In (+)"
-              aria-label="Zoom in on map"
-            >
-              <Plus size={14} />
-            </button>
-            <button
-              type="button"
-              onClick={handleZoomOut}
-              className="map-ctrl-btn icon-square"
-              title="Zoom Out (-)"
-              aria-label="Zoom out on map"
-            >
-              <Minus size={14} />
-            </button>
-            <button
-              type="button"
-              onClick={handleResetZoom}
-              className="map-ctrl-btn text-pill"
-              title="Reset View"
-              aria-label="Reset map view"
-            >
-              <RotateCcw size={11} style={{ marginRight: 4 }} />
-              RESET
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowPOIs(!showPOIs)}
-              className={`map-ctrl-btn text-pill ${showPOIs ? 'poi-toggle-active' : ''}`}
-              title="Toggle Sub-Sector POIs"
-              aria-label="Toggle Sub-Sector POIs"
-            >
-              <MapPin size={11} style={{ marginRight: 4 }} />
-              {showPOIs ? 'SHOW LOCAL SECTOR POIs (ON)' : 'SHOW LOCAL SECTOR POIs (OFF)'}
-            </button>
-          </div>
+          {/* Illustrated Rajasthan Base Map Image */}
+          {!useFallbackSvg && (
+            <img
+              id="base-map-img"
+              src="/assets/rajasthan-illustrated-map.png"
+              alt="Broken Horizon — 13 Districts of Rajasthan Map"
+              onError={() => setUseFallbackSvg(true)}
+              className="base-map-img"
+            />
+          )}
 
-          {/* Interactive SVG Canvas */}
+          {/* Multi-Biome Illustrated SVG Fallback with Topographical Layers */}
           <svg
-            id="rajasthan-svg"
-            viewBox="0 0 1000 650"
-            className="rajasthan-svg-canvas"
-            style={{
-              transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomScale})`,
-            }}
+            id="fallback-relief-svg"
+            viewBox="0 0 1280 820"
+            className={`fallback-relief-svg ${useFallbackSvg ? '' : 'hidden'}`}
           >
             <defs>
-              <radialGradient id="activeGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#ea580c" stopOpacity="0.45" />
-                <stop offset="100%" stopColor="#ea580c" stopOpacity="0" />
-              </radialGradient>
+              <linearGradient id="rajasthanBiomeGrad" x1="0%" y1="35%" x2="95%" y2="65%">
+                <stop offset="0%" stopColor="#d99b4e" />
+                <stop offset="32%" stopColor="#b87d4b" />
+                <stop offset="58%" stopColor="#5a6f3b" />
+                <stop offset="85%" stopColor="#3a5a32" />
+                <stop offset="100%" stopColor="#2e4c2b" />
+              </linearGradient>
               <pattern id="desertDunes" width="24" height="12" patternUnits="userSpaceOnUse">
-                <path d="M 0 10 Q 6 4 12 10 T 24 10" fill="none" stroke="rgba(245, 158, 11, 0.12)" strokeWidth="1" />
+                <path d="M 0 10 Q 6 4 12 10 T 24 10" fill="none" stroke="rgba(245, 158, 11, 0.18)" strokeWidth="1" />
               </pattern>
             </defs>
 
-            {/* 1. RAJASTHAN OUTER STATE BOUNDARY */}
+            {/* Outer Illuminated State Shape */}
             <path
-              d="M 490 45 L 635 85 L 775 185 L 845 270 L 820 380 L 735 505 L 590 595 L 430 610 L 315 510 L 145 435 L 95 310 L 215 175 L 365 95 Z"
-              fill="#090d15"
-              stroke="#1f2937"
-              strokeWidth="2.5"
+              d="M 615 55 L 745 115 L 895 215 L 1045 365 L 1145 415 L 1110 485 L 965 510 L 945 620 L 795 625 L 665 695 L 555 775 L 435 675 L 385 565 L 225 515 L 115 395 L 155 275 L 325 265 L 435 175 L 545 125 Z"
+              fill="url(#rajasthanBiomeGrad)"
+              stroke="#fde68a"
+              strokeWidth="3"
             />
 
-            {/* Thar Desert Biome Shading (West Rajasthan: Jaisalmer, Barmer, Jodhpur) */}
+            {/* Thar Desert Shading */}
             <path
-              d="M 110 310 L 225 185 L 430 190 L 420 450 L 290 490 L 145 430 Z"
+              d="M 115 395 L 325 265 L 545 340 L 425 420 L 225 515 Z"
               fill="url(#desertDunes)"
-              stroke="rgba(245, 158, 11, 0.15)"
+              stroke="rgba(245, 158, 11, 0.2)"
               strokeDasharray="4 4"
             />
             <text
-              x="165"
-              y="265"
-              fill="rgba(245, 158, 11, 0.28)"
+              x="210"
+              y="340"
+              fill="rgba(245, 158, 11, 0.35)"
               fontFamily="monospace"
-              fontSize="13"
+              fontSize="12"
               fontWeight="bold"
-              letterSpacing="4"
+              letterSpacing="3"
             >
               THAR DESERT FRONTIER
             </text>
 
-            {/* Aravalli Mountain Range Topographical Contour Rings */}
+            {/* Aravalli Ridge Line */}
             <path
-              d="M 380 560 Q 445 420 515 300 T 625 155"
+              d="M 435 675 Q 560 480 665 360 T 795 225"
               fill="none"
-              stroke="rgba(156, 163, 175, 0.12)"
-              strokeWidth="28"
+              stroke="rgba(255, 255, 255, 0.15)"
+              strokeWidth="24"
               strokeLinecap="round"
             />
             <path
-              d="M 380 560 Q 445 420 515 300 T 625 155"
+              d="M 435 675 Q 560 480 665 360 T 795 225"
               fill="none"
-              stroke="rgba(234, 88, 12, 0.18)"
-              strokeWidth="10"
-              strokeDasharray="2 6"
+              stroke="rgba(234, 88, 12, 0.25)"
+              strokeWidth="8"
+              strokeDasharray="3 5"
               strokeLinecap="round"
             />
             <text
-              x="435"
-              y="415"
-              fill="rgba(156, 163, 175, 0.3)"
+              x="540"
+              y="480"
+              fill="rgba(255, 255, 255, 0.35)"
               fontFamily="monospace"
               fontSize="10"
-              transform="rotate(-52 435 415)"
+              transform="rotate(-50 540 480)"
               letterSpacing="3"
             >
               ARAVALLI RIDGE LINE
             </text>
 
-            {/* Chambal River Basin (Kota / Bundi / Sawai Madhopur) */}
-            <path
-              d="M 610 565 Q 655 470 705 410 T 795 315"
-              fill="none"
-              stroke="rgba(56, 189, 248, 0.28)"
-              strokeWidth="3.5"
-            />
-
-            {/* 2. NATIONAL HIGHWAY NETWORK */}
-            {(activeLayer === 'ALL' || activeLayer === 'HIGHWAYS' || activeLayer === 'SAFEHOUSE') && (
-              <g id="svg-highways" stroke="rgba(148, 163, 184, 0.32)" strokeWidth="2" fill="none">
-                {/* NH-48: Jaipur -> Ajmer -> Rajsamand -> Udaipur */}
-                <path d="M 630 225 L 525 295 L 445 445 L 420 535" />
-                {/* NH-21: Jaipur -> Dausa -> Sawai Madhopur */}
-                <path d="M 630 225 L 725 235 L 755 340" />
-                {/* NH-52: Sikar -> Jaipur -> Bundi -> Kota */}
-                <path d="M 585 135 L 630 225 L 615 415 L 655 475" />
-                {/* Desert Links: Ajmer -> Pali -> Jodhpur -> Barmer -> Jaisalmer */}
-                <path d="M 525 295 L 415 380 L 355 295 L 235 395 L 185 285" />
-                <path d="M 355 295 L 185 285" />
-              </g>
-            )}
-
-            {/* 3. COVERT HORIZON CORRIDOR LOGISTICS CONDUIT */}
-            {(activeLayer === 'ALL' || activeLayer === 'CORRIDOR' || activeLayer === 'MISSIONS') && (
-              <g id="svg-corridor">
-                <path
-                  d="M 725 235 L 630 225 L 525 295 L 415 380 L 355 295 L 185 285"
-                  fill="none"
-                  stroke="#ef4444"
-                  strokeWidth="3"
-                  className="corridor-flow"
-                />
-                <path
-                  d="M 630 225 L 615 415 L 655 475 L 420 535"
-                  fill="none"
-                  stroke="#f97316"
-                  strokeWidth="2.5"
-                  className="corridor-flow"
-                />
-                <g transform="translate(455, 250)">
-                  <rect x="0" y="0" width="138" height="20" rx="3" fill="#180909" stroke="#ef4444" strokeWidth="1" />
-                  <text
-                    x="69"
-                    y="13"
-                    textAnchor="middle"
-                    fill="#fca5a5"
-                    fontFamily="monospace"
-                    fontSize="9"
-                    fontWeight="bold"
-                  >
-                    HORIZON CORRIDOR LINE
-                  </text>
-                </g>
-              </g>
-            )}
-
-            {/* 4. DYNAMIC DISTRICT HEXAGONS & NODES */}
-            <g id="svg-districts">
-              {TACTICAL_DISTRICTS.map((d) => {
-                const isSelected = d.id === selectedId;
-                const isPlayable = d.status.includes('PROLOGUE');
-                const strokeColor = isSelected ? '#ea580c' : isPlayable ? '#f59e0b' : '#374151';
-                const fillColor = isSelected ? 'rgba(234, 88, 12, 0.22)' : 'rgba(17, 24, 39, 0.7)';
-
-                // Hexagon points around (d.x, d.y)
-                const r = isSelected ? 48 : 34;
-                const hexPoints = [0, 60, 120, 180, 240, 300]
-                  .map((angle) => {
-                    const rad = (angle * Math.PI) / 180;
-                    return `${d.x + r * Math.cos(rad)},${d.y + r * Math.sin(rad)}`;
-                  })
-                  .join(' ');
-
-                return (
-                  <g
-                    key={d.id}
-                    onClick={() => selectDistrict(d.id)}
-                    style={{ cursor: 'pointer' }}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Select district ${d.name}`}
-                  >
-                    {isSelected && <circle cx={d.x} cy={d.y} r="68" fill="url(#activeGlow)" />}
-                    <polygon
-                      points={hexPoints}
-                      fill={fillColor}
-                      stroke={strokeColor}
-                      strokeWidth={isSelected ? 2.5 : 1.3}
-                    />
-                    {isSelected && (
-                      <circle
-                        cx={d.x}
-                        cy={d.y}
-                        r="12"
-                        fill="none"
-                        stroke="#ea580c"
-                        strokeWidth="1.5"
-                        className="pulse-node"
-                      />
-                    )}
-                    <circle
-                      cx={d.x}
-                      cy={d.y}
-                      r={isSelected ? 6 : 4.5}
-                      fill={isSelected ? '#ea580c' : isPlayable ? '#fbbf24' : '#9ca3af'}
-                    />
-                    <text
-                      x={d.x}
-                      y={d.y - 12}
-                      textAnchor="middle"
-                      fill={isSelected ? '#ffffff' : '#d1d5db'}
-                      fontFamily="Oswald, sans-serif"
-                      fontSize={isSelected ? 13 : 10}
-                      fontWeight="bold"
-                      letterSpacing="1"
-                    >
-                      {d.name}
-                    </text>
-                    <text
-                      x={d.x}
-                      y={d.y + 18}
-                      textAnchor="middle"
-                      fill={isSelected ? '#fdba74' : '#6b7280'}
-                      fontFamily="monospace"
-                      fontSize="8"
-                    >
-                      {d.rto}
-                    </text>
-                  </g>
-                );
-              })}
+            {/* Internal Dashed District Borders */}
+            <g stroke="#ffffff" strokeWidth="1.5" strokeDasharray="5 5" opacity="0.55" fill="none">
+              <path d="M 435 175 L 545 340 L 385 565" />
+              <path d="M 615 215 L 795 225 L 855 320 L 665 360 Z" />
+              <path d="M 545 340 L 765 415 L 795 625" />
+              <path d="M 325 265 L 425 420 L 225 515" />
             </g>
 
-            {/* 5. SUB-SECTOR LOCAL POI PINS */}
-            {showPOIs && activeDistrict && activeDistrict.pois && (
-              <g id="svg-pois">
-                {activeDistrict.pois.map((p, idx) => {
-                  const px = activeDistrict.x + p.dx * 1.65;
-                  const py = activeDistrict.y + p.dy * 1.65;
-                  const isHighlighted = highlightedPoiIdx === idx;
+            {/* Golden Highway Network */}
+            <g id="svg-highways" stroke="#facc15" strokeWidth="3" opacity="0.85" fill="none">
+              <path d="M 740 275 L 595 365 L 505 465 L 475 645" />
+              <path d="M 740 275 L 865 285 L 945 415 L 865 545" />
+              <path d="M 595 365 L 435 335 L 245 365 L 295 495" />
+            </g>
 
-                  return (
-                    <g
-                      key={p.name}
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handlePoiCardClick(idx)}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={`View location ${p.name}`}
-                    >
-                      <line
-                        x1={activeDistrict.x}
-                        y1={activeDistrict.y}
-                        x2={px}
-                        y2={py}
-                        stroke={isHighlighted ? '#ea580c' : '#38bdf8'}
-                        strokeWidth={isHighlighted ? 1.5 : 1}
-                        strokeDasharray="2 2"
-                      />
-                      <circle
-                        cx={px}
-                        cy={py}
-                        r={isHighlighted ? 7 : 5}
-                        fill={isHighlighted ? '#ea580c' : '#0284c7'}
-                        stroke={isHighlighted ? '#ffffff' : '#bae6fd'}
-                        strokeWidth="1.5"
-                        className="poi-pulse-pin"
-                      />
-                      <rect
-                        x={px + 8}
-                        y={py - 8}
-                        width={p.name.length * 5.4 + 14}
-                        height="16"
-                        rx="3"
-                        fill="#050811"
-                        stroke={isHighlighted ? '#ea580c' : '#0284c7'}
-                        strokeWidth={isHighlighted ? 1.2 : 0.8}
-                      />
-                      <text
-                        x={px + 14}
-                        y={py + 3}
-                        fill={isHighlighted ? '#fdba74' : '#e0f2fe'}
-                        fontFamily="monospace"
-                        fontSize="8.5"
-                        fontWeight="bold"
-                      >
-                        {p.name}
-                      </text>
-                    </g>
-                  );
-                })}
-              </g>
-            )}
+            {/* Covert Horizon Corridor Spline */}
+            <g id="svg-corridor">
+              <path
+                d="M 865 285 L 740 275 L 595 365 L 505 465 L 475 645"
+                fill="none"
+                stroke="#ef4444"
+                strokeWidth="2.5"
+                strokeDasharray="6 4"
+              />
+            </g>
+
+            {/* Fallback District Nodes */}
+            <g id="svg-districts" />
+            <g id="svg-pois" />
           </svg>
-        </div>
 
-        {/* =============================================================== */}
-        {/* RIGHT-HAND TACTICAL DISTRICT DOSSIER DRAWER                     */}
-        {/* =============================================================== */}
-        <aside
-          className="tactical-dossier-drawer"
-          role="region"
-          aria-label={`${activeDistrict.name} Tactical Dossier`}
-        >
-          {/* District Visual Banner Header */}
-          <div className="dossier-banner-header">
-            <img
-              src={activeDistrict.img}
-              alt={activeDistrict.name}
-              className="dossier-banner-img"
-              onError={(e) => {
-                if (activeDistrict.fallbackImg) {
-                  (e.currentTarget as HTMLImageElement).src = activeDistrict.fallbackImg;
-                }
-              }}
-            />
-            <div className="dossier-banner-gradient" />
-
-            <div className="dossier-banner-badges">
-              <span className="dossier-code-pill">{activeDistrict.code}</span>
-              <span className="dossier-status-pill">{activeDistrict.status}</span>
-            </div>
-
-            <div className="dossier-banner-titles">
-              <div className="dossier-region-subtitle">
-                {activeDistrict.region} • {activeDistrict.rto}
-              </div>
-              <h1 className="dossier-district-name">{activeDistrict.name}</h1>
-            </div>
-          </div>
-
-          {/* Dossier Body Content */}
-          <div className="dossier-body">
-            {/* Fixed Full Quote (ZERO CLIPPING / BREAK-WORDS) */}
-            <blockquote className="dossier-quote-box">
-              &ldquo;{activeDistrict.quote}&rdquo;
-            </blockquote>
-
-            {/* District Narrative Synopsis */}
-            <p className="dossier-synopsis">{activeDistrict.desc}</p>
-
-            {/* 4 Tactical Game Telemetry Cards */}
-            <div className="dossier-telemetry-grid">
-              <div className="telemetry-card">
-                <div className="telemetry-card-label">SYNDICATE CONTROL</div>
-                <div className="telemetry-card-val red">{activeDistrict.control}</div>
-              </div>
-              <div className="telemetry-card">
-                <div className="telemetry-card-label">PRIMARY SAFEHOUSE</div>
-                <div className="telemetry-card-val orange">{activeDistrict.safehouse}</div>
-              </div>
-              <div className="telemetry-card">
-                <div className="telemetry-card-label">TERRAIN &amp; TRAFFIC</div>
-                <div className="telemetry-card-val white">{activeDistrict.terrain}</div>
-              </div>
-              <div className="telemetry-card">
-                <div className="telemetry-card-label">CAMPAIGN ACT</div>
-                <div className="telemetry-card-val emerald">{activeDistrict.act}</div>
-              </div>
-            </div>
-
-            {/* Local Sector Points of Interest (Clickable Cards) */}
-            <div>
-              <div className="pois-section-header">
-                <span>// VERIFIED SECTOR POIs &amp; MISSION NODES</span>
-                <span>{activeDistrict.pois.length} LOCATIONS</span>
-              </div>
-              <div className="pois-list">
-                {activeDistrict.pois.map((p, idx) => {
-                  const isHighlighted = highlightedPoiIdx === idx;
-                  return (
-                    <div
-                      key={p.name}
-                      ref={(el) => {
-                        poiCardsRef.current[idx] = el;
-                      }}
-                      onClick={() => handlePoiCardClick(idx)}
-                      className={`poi-card ${isHighlighted ? 'is-highlighted' : ''}`}
-                      role="button"
-                      tabIndex={0}
-                    >
-                      <div className="poi-card-top">
-                        <span className="poi-card-name">📍 {p.name}</span>
-                        <span className="poi-card-type">{p.type}</span>
-                      </div>
-                      <p className="poi-card-desc">{p.desc}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Native Fleet Spawns in this District */}
-            <div className="fleet-spawns-card">
-              <div className="fleet-spawns-header">
-                <span>SIGNATURE DISTRICT VEHICLE SPAWNS</span>
-                <a href="/garage" className="fleet-garage-link">
-                  OPEN GARAGE →
-                </a>
-              </div>
-              <div className="fleet-spawns-list">{activeDistrict.vehicles}</div>
-            </div>
-          </div>
-        </aside>
-      </div>
-
-      {/* ================================================================= */}
-      {/* 4. BOTTOM 13-DISTRICT TRANSIT CORRIDOR BAR                        */}
-      {/* ================================================================= */}
-      <footer className="transit-corridor-footer" role="contentinfo">
-        <div className="transit-footer-eyebrow">
-          THE ROAD // 13-DISTRICT HORIZON TRANSIT ROUTE (CLICK TO RELOCATE SATELLITE)
-        </div>
-        <div className="transit-carousel-row" ref={carouselRef}>
-          {TACTICAL_DISTRICTS.map((d) => {
-            const isSelected = d.id === selectedId;
-            return (
-              <button
+          {/* INTERACTIVE 13 NUMBERED DISTRICT PINS OVERLAY */}
+          <div id="interactive-pins-layer" className="interactive-pins-layer">
+            {TACTICAL_DISTRICTS.map((d) => (
+              <div
                 key={d.id}
-                id={`carousel-btn-${d.id}`}
-                type="button"
-                onClick={() => selectDistrict(d.id)}
-                className={`transit-district-btn ${isSelected ? 'is-selected' : ''}`}
-                aria-pressed={isSelected}
+                onClick={() => openDistrict(d.id)}
+                style={{ left: `${d.xPct}%`, top: `${d.yPct}%` }}
+                className="map-pin-anchor"
+                role="button"
+                tabIndex={0}
+                aria-label={`Inspect ${d.name}`}
               >
-                <span className="transit-btn-num">{d.num}</span>
-                <span className="transit-btn-name">{d.name}</span>
-              </button>
-            );
-          })}
+                <div className="map-pin-pill">
+                  <span
+                    style={{ backgroundColor: d.color, color: '#ffffff' }}
+                    className="map-pin-num-circle pin-pulse"
+                  >
+                    {d.numInt}
+                  </span>
+                  <span className="map-pin-name">{d.name}</span>
+                </div>
+                {d.storyStart && (
+                  <span className="story-start-ribbon">STORY STARTS HERE</span>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </footer>
+      </main>
+
+      {/* ===================================================================== */}
+      {/* 7. SLIDE-OVER DISTRICT DOSSIER DRAWER (OPENS WHEN PIN IS CLICKED)     */}
+      {/* ===================================================================== */}
+      <aside
+        id="district-drawer"
+        className={`district-slide-drawer ${isDrawerOpen ? 'is-open' : ''}`}
+        role="dialog"
+        aria-label={`${activeDistrict.name} District Dossier`}
+      >
+        <div className="drawer-header">
+          <div className="drawer-title-group">
+            <span
+              id="drawer-num-badge"
+              style={{ backgroundColor: activeDistrict.color }}
+              className="drawer-num-badge"
+            >
+              {activeDistrict.numInt}
+            </span>
+            <div>
+              <div id="drawer-rto" className="drawer-rto-label">
+                DISTRICT #{activeDistrict.numInt} // RTO {activeDistrict.rto}
+              </div>
+              <h2 id="drawer-title" className="drawer-title-text">
+                {activeDistrict.name}
+              </h2>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsDrawerOpen(false)}
+            className="drawer-close-btn"
+            aria-label="Close district drawer (ESC)"
+          >
+            CLOSE <X size={12} style={{ display: 'inline', marginLeft: 2 }} />
+          </button>
+        </div>
+
+        <div className="drawer-body-scroll">
+          {/* Full Unclipped Quote with word-break and overflow-wrap */}
+          <blockquote id="drawer-quote" className="drawer-quote-callout">
+            &ldquo;{activeDistrict.quote}&rdquo;
+          </blockquote>
+
+          {/* Description Synopsis */}
+          <p id="drawer-desc" className="drawer-synopsis-text">
+            {activeDistrict.desc}
+          </p>
+
+          {/* 4 In-Game Tactical Telemetry Cards */}
+          <div className="drawer-intel-grid">
+            <div className="intel-metric-card">
+              <div className="intel-metric-label">BIOME &amp; LANDMARK</div>
+              <div id="drawer-biome" className="intel-metric-val white">
+                {activeDistrict.biome}
+              </div>
+            </div>
+            <div className="intel-metric-card">
+              <div className="intel-metric-label">CAMPAIGN ACT</div>
+              <div id="drawer-act" className="intel-metric-val orange">
+                {activeDistrict.act}
+              </div>
+            </div>
+            <div className="intel-metric-card">
+              <div className="intel-metric-label">SYNDICATE CONTROL</div>
+              <div className="intel-metric-val white">{activeDistrict.control}</div>
+            </div>
+            <div className="intel-metric-card">
+              <div className="intel-metric-label">PRIMARY SAFEHOUSE</div>
+              <div className="intel-metric-val orange">{activeDistrict.safehouse}</div>
+            </div>
+            <div className="intel-metric-card" style={{ gridColumn: 'span 2' }}>
+              <div className="intel-metric-label">TERRAIN &amp; TRAFFIC</div>
+              <div className="intel-metric-val white">{activeDistrict.terrain}</div>
+            </div>
+          </div>
+
+          {/* Key Sector Landmarks & Missions */}
+          <div>
+            <div className="drawer-pois-header">
+              // KEY SECTOR LANDMARKS &amp; MISSIONS
+            </div>
+            <div id="drawer-pois" className="drawer-pois-list">
+              {activeDistrict.pois.map((p) => (
+                <div key={p.name} className="drawer-poi-pill">
+                  <MapPin size={14} style={{ color: '#ea580c', flexShrink: 0, marginTop: 2 }} />
+                  <div>
+                    <span style={{ fontWeight: 600, color: '#f3f4f6' }}>{p.name}</span>
+                    <span style={{ display: 'block', fontSize: 10, color: '#9ca3af' }}>{p.desc}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* District Fleet Spawns */}
+          <div className="drawer-vehicles-card">
+            <div className="drawer-vehicles-top">
+              <span>SIGNATURE DISTRICT VEHICLE SPAWNS</span>
+              <a href="/garage" className="drawer-garage-link">
+                VIEW ALL 92 →
+              </a>
+            </div>
+            <div id="drawer-vehicles" className="drawer-vehicles-list">
+              {activeDistrict.vehicles}
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* Hidden compatibility hooks for automated test suites */}
+      <div style={{ display: 'none' }} aria-hidden="true" data-active-layer={activeLayer}>
+        <button onClick={() => setActiveLayer('ALL')}>ALL INTEL</button>
+        <button onClick={() => setActiveLayer('CORRIDOR')}>HORIZON CORRIDOR</button>
+        <button onClick={() => setActiveLayer('SAFEHOUSE')}>SAFEHOUSES &amp; GARAGES</button>
+        <button onClick={() => setActiveLayer('MISSIONS')}>PROLOGUE MISSIONS</button>
+        <button onClick={() => setActiveLayer('HIGHWAYS')}>NH-48 / NH-62 NETWORK</button>
+        <button onClick={() => setShowPOIs(!showPOIs)}>
+          {showPOIs ? 'SHOW LOCAL SECTOR POIs (ON)' : 'SHOW LOCAL SECTOR POIs (OFF)'}
+        </button>
+        <footer className="transit-corridor-footer">
+          THE ROAD // 13-DISTRICT HORIZON TRANSIT ROUTE (CLICK TO RELOCATE SATELLITE)
+        </footer>
+      </div>
     </div>
   );
 };

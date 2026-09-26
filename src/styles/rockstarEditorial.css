@@ -1270,7 +1270,7 @@ body {
 
 .highway-waypoints-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 2rem;
   margin-bottom: 3rem;
 }
@@ -1283,6 +1283,7 @@ body {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .waypoint-image-frame {
@@ -1382,7 +1383,7 @@ body {
 
 .media-grid-clean {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 1.5rem;
 }
 
@@ -1980,15 +1981,22 @@ body {
 }
 
 /* ==========================================================================
-   12. RESPONSIVE BREAKPOINTS (Mobile & Tablet Ergonomics)
+   12. RESPONSIVE BREAKPOINTS (Mobile, Tablet, Laptop, Desktop & Ultrawide)
    ========================================================================== */
-@media (max-width: 1024px) {
+
+/* Laptop & Tablet Boundary: 1023px and below */
+@media (max-width: 1023px) {
   .nav-menu-desktop {
     display: none;
   }
 
   .mobile-hamburger-btn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 4px;
   }
 
   .operative-cinematic-card,
@@ -2005,102 +2013,147 @@ body {
     order: 2;
   }
 
+  .district-preview-triplet {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .footer-main-grid {
     grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
   }
 }
 
+/* Tablet & Mobile Boundary: 768px and below */
 @media (max-width: 768px) {
+  .section-container {
+    padding: 0 clamp(1rem, 3.5vw, 2rem);
+  }
+
   .nav-container-inner {
-    padding: 0 1.25rem;
+    padding: 0 1rem;
+    height: 68px;
   }
 
   .nav-audio-btn {
-    display: none;
-  }
-
-  .hero-fullscreen-stage {
-    min-height: 580px;
-  }
-
-  .media-grid-clean {
-    grid-template-columns: 1fr;
-  }
-
-  .highway-waypoints-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .district-preview-triplet {
-    grid-template-columns: 1fr;
-  }
-
-  .form-inputs-row {
-    flex-direction: column;
-  }
-
-  .specs-tiers-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .footer-main-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .footer-legal-bar {
-    flex-direction: column;
-    gap: 1.5rem;
-    align-items: flex-start;
-  }
-
-  .operative-editorial-body {
-    padding: 2.5rem 1.5rem;
-  }
-
-  .chapter-editorial-content {
-    padding: 2.5rem 1.5rem;
-  }
-
-  .territory-cinema-frame {
-    padding: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .nav-brand-text {
-    font-size: 1rem;
-    letter-spacing: 0.04em;
-  }
-
-  .nav-monogram {
-    width: 32px;
-    height: 32px;
-    font-size: 0.85rem;
-  }
-
-  .btn-playtest-nav {
-    padding: 0.5rem 0.85rem;
-    font-size: 0.72rem;
-  }
-
-  .hero-action-buttons {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .btn-trailer-primary,
-  .btn-playtest-secondary {
-    width: 100%;
+    padding: 0.5rem;
+    min-width: 40px;
+    min-height: 40px;
     justify-content: center;
   }
 
-  .playtest-centered-box {
-    padding: 2.5rem 1.25rem;
+  .nav-audio-btn .audio-label {
+    display: none;
+  }
+
+  .btn-playtest-nav {
+    display: none;
+  }
+
+  /* Fullscreen Mobile Drawer */
+  .mobile-overlay-drawer {
+    padding: clamp(1.25rem, 4vw, 2rem);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-drawer-link {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    font-size: clamp(1.25rem, 5vw, 1.75rem);
+  }
+
+  .mobile-close-btn {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Trailer Cinema Frame */
+  .trailer-cinematic-stage {
+    padding: 1.5rem 0 3.5rem 0;
+  }
+
+  .trailer-cinema-frame {
+    aspect-ratio: 16 / 9;
+    min-height: auto;
+  }
+
+  .play-disc-pulse {
+    width: 64px;
+    height: 64px;
+  }
+
+  .play-disc-pulse svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .trailer-play-caption {
+    font-size: 0.75rem;
+  }
+
+  .trailer-bottom-caption {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  /* Operatives Showcase */
+  .operatives-showcase-stage {
+    padding: 3.5rem 0;
+  }
+
+  .operatives-switch-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .operative-tab-btn {
+    min-height: 44px;
+    padding: 0.65rem 1.25rem;
+  }
+
+  .operative-portrait-frame {
+    min-height: 280px;
+    max-height: 400px;
+  }
+
+  .operative-editorial-body {
+    padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3vw, 1.5rem);
+  }
+
+  /* Gameplay Chapters */
+  .gameplay-chapters-stage {
+    padding: 3.5rem 0;
+  }
+
+  .chapters-stack {
+    gap: 2.5rem;
+  }
+
+  .chapter-visual-frame {
+    min-height: 260px;
+    max-height: 380px;
+  }
+
+  .chapter-editorial-content {
+    padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3vw, 1.5rem);
+  }
+
+  /* Territory Section */
+  .world-atlas-stage {
+    padding: 3.5rem 0;
   }
 
   .territory-cinema-frame {
     aspect-ratio: auto;
-    min-height: 480px;
+    min-height: auto;
     padding: 1.25rem;
   }
 
@@ -2112,6 +2165,186 @@ body {
 
   .territory-nav-arrows {
     align-self: flex-end;
+  }
+
+  .cinema-arrow-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .district-preview-triplet {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Route & Media Grids */
+  .highway-route-stage,
+  .media-vault-stage {
+    padding: 3.5rem 0;
+  }
+
+  .media-grid-clean,
+  .highway-waypoints-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Lightbox */
+  .media-lightbox-overlay {
+    padding: clamp(0.5rem, 2vw, 1rem);
+  }
+
+  .lightbox-full-img {
+    max-height: 60vh;
+  }
+
+  .lightbox-caption-bar {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  /* Playtest Form */
+  .playtest-funnel-stage {
+    padding: 3.5rem 0;
+  }
+
+  .playtest-centered-box {
+    padding: clamp(2rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem);
+  }
+
+  .form-inputs-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .playtest-text-input {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .btn-playtest-submit {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+  }
+
+  /* Dev Drawer */
+  .specs-tiers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dev-drawer-content-box {
+    padding: 1.5rem 1rem;
+    gap: 1.5rem;
+  }
+
+  .matrix-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Footer */
+  .studio-footer-stage {
+    padding: 3.5rem 0 2rem 0;
+  }
+
+  .footer-main-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .footer-legal-bar {
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+}
+
+/* Small Mobile Boundary: 480px and below (320px–480px phones) */
+@media (max-width: 480px) {
+  .nav-brand-text {
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+  }
+
+  .nav-monogram {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .editorial-lead-block {
+    margin-bottom: 2rem;
+  }
+
+  .lead-title-editorial {
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
+  }
+
+  .operative-actions-row,
+  .hero-action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-garage-primary,
+  .btn-dossier-secondary,
+  .btn-trailer-primary,
+  .btn-playtest-secondary,
+  .btn-launch-garage-inline,
+  .btn-explore-atlas {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+  }
+
+  .territory-meta-pills {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .district-selector-strip {
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .dev-accordion-trigger {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .trigger-left-brand {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .playtest-centered-box {
+    padding: 1.75rem 1rem;
+  }
+}
+
+/* Ultrawide Balance: 1920px and above */
+@media (min-width: 1920px) {
+  .section-container {
+    max-width: 1540px;
+  }
+
+  .district-preview-triplet {
+    gap: 2rem;
+  }
+
+  .media-grid-clean {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .highway-waypoints-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

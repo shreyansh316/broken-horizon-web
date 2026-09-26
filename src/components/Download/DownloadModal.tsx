@@ -40,8 +40,7 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose })
       onClick={onClose}
     >
       <div
-        className="trailer-modal-wrapper"
-        style={{ maxWidth: '640px', background: '#0a0b0e', border: '1px solid var(--border-medium)', padding: '2.5rem' }}
+        className="trailer-modal-wrapper download-modal-box"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -55,18 +54,18 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose })
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
           <ShieldAlert size={24} className="text-amber" />
-          <h3 id="download-modal-heading" style={{ fontSize: '1.75rem' }}>
+          <h3 id="download-modal-heading" style={{ fontSize: 'clamp(1.25rem, 4vw, 1.75rem)', margin: 0, textTransform: 'uppercase' }}>
             BUILD CLEARANCE STATUS
           </h3>
         </div>
 
-        <p style={{ fontSize: '1.05rem', color: 'var(--color-sand-200)', lineHeight: '1.6', marginBottom: '2rem' }}>
+        <p style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1.05rem)', color: 'var(--color-sand-200)', lineHeight: '1.6', marginBottom: '2rem' }}>
           {isItchConfigured
             ? 'Official distribution page is connected. You can proceed directly to the verified store portal.'
             : 'The first public Windows build will be released after the first major development milestone.'}
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', padding: '1.5rem', background: '#121418', border: '1px solid var(--border-subtle)', marginBottom: '2rem' }}>
+        <div className="download-modal-specs-grid">
           <div>
             <span style={{ display: 'block', fontSize: '0.6875rem', letterSpacing: '0.16em', color: 'var(--color-sand-muted)', marginBottom: '0.2rem' }}>
               TARGET PLATFORM

@@ -48,7 +48,7 @@
   width: 100%;
   background-color: #0f1115;
   border: 1px solid #27272a;
-  padding: 3rem 2.5rem;
+  padding: clamp(1.75rem, 5vw, 3rem) clamp(1.25rem, 4vw, 2.5rem);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.95);
   position: relative;
 }
@@ -216,18 +216,20 @@
 
 .admin-title {
   font-family: Georgia, serif;
-  font-size: 2.2rem;
+  font-size: clamp(1.4rem, 5vw, 2.2rem);
   font-weight: 700;
   letter-spacing: 0.05em;
   color: #ffffff;
   text-transform: uppercase;
   margin: 0;
+  word-break: break-word;
 }
 
 .admin-controls-group {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .btn-admin-nav {
@@ -243,6 +245,7 @@
   align-items: center;
   gap: 0.5rem;
   transition: all 0.2s;
+  min-height: 44px;
 }
 
 .btn-admin-nav:hover {
@@ -267,7 +270,7 @@
    -------------------------------------------------------------------------- */
 .admin-metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2.5rem;
 }
@@ -338,7 +341,7 @@
 
 .admin-search-wrapper {
   flex: 1;
-  min-width: 280px;
+  min-width: min(100%, 280px);
   position: relative;
 }
 
@@ -915,14 +918,48 @@
   .admin-terminal-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 1rem;
   }
+
   .portal-header-zone,
   .portal-body-zone,
   .portal-footer-bar {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
+
   .detail-telemetry-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-container {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-auth-gate-stage {
+    padding: 1rem;
+  }
+
+  .auth-headline {
+    font-size: clamp(1.4rem, 6vw, 1.85rem);
+  }
+
+  .portal-headline {
+    font-size: clamp(1.75rem, 7vw, 2.5rem);
+  }
+
+  .admin-filters-group {
+    width: 100%;
+  }
+
+  .filter-tab-btn {
+    flex: 1;
+    text-align: center;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

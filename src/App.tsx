@@ -39,11 +39,11 @@ export function App() {
     const hash = window.location.hash.toLowerCase();
 
     if (path.startsWith('/admin') || hash === '#/admin' || hash === '#admin') return 'admin';
-    if (path.startsWith('/playtest') || path.startsWith('/access') || hash === '#/playtest') return 'playtest';
+    if (path.startsWith('/playtest') || path.startsWith('/access') || hash === '#/playtest' || hash === '#/access' || hash === '#access') return 'playtest';
     if (path.startsWith('/world') || hash === '#/world' || hash === '#world-explorer') return 'world';
     if (path.startsWith('/characters') || hash === '#/characters') return 'characters';
     if (path.startsWith('/story') || hash === '#/story') return 'story';
-    if (path.startsWith('/garage') || hash === '#/garage' || hash === '#garage-lab') return 'garage';
+    if (path.startsWith('/garage') || hash === '#/garage' || hash === '#garage-lab' || hash === '#transport') return 'garage';
     if (path.startsWith('/development') || hash === '#/development' || hash === '#development') return 'development';
     if (path.startsWith('/privacy') || hash === '#/privacy') return 'privacy';
     if (path.startsWith('/terms') || hash === '#/terms') return 'terms';
@@ -62,7 +62,7 @@ export function App() {
       if (path.startsWith('/admin') || hash === '#/admin' || hash === '#admin') {
         setCurrentRoute('admin');
         document.title = 'Broken Horizon — Playtest Clearance Admin';
-      } else if (path.startsWith('/playtest') || path.startsWith('/access') || hash === '#/playtest') {
+      } else if (path.startsWith('/playtest') || path.startsWith('/access') || hash === '#/playtest' || hash === '#/access' || hash === '#access') {
         setCurrentRoute('playtest');
         document.title = 'Broken Horizon — Verified Playtest Portal';
       } else if (path.startsWith('/world') || hash === '#/world' || hash === '#world-explorer') {
