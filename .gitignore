@@ -28,3 +28,5 @@ dist-ssr
 *.sw?
 screenshots/
 chrome_temp*
+__pycache__/
+*.pyc
