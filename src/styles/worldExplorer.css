@@ -1,0 +1,1236 @@
+/* ==========================================================================
+   BROKEN HORIZON — ILLUSTRATED 3D-RELIEF RAJASTHAN GAME MAP STYLES
+   Ubisoft Far Cry / Assassin's Creed / Rockstar Games Collector's Map
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Root Container & Ocean Slate Background
+   -------------------------------------------------------------------------- */
+.tactical-atlas-root,
+.ocean-slate-root {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #071018;
+  background: radial-gradient(circle at 50% 48%, #102030 0%, #071018 70%, #04080d 100%);
+  color: #f3f4f6;
+  position: relative;
+  user-select: none;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+   Pulsing Pin Halo Keyframe Animation
+   -------------------------------------------------------------------------- */
+@keyframes pulse-halo {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-ring {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(220, 38, 38, 0);
+  }
+}
+
+.pin-pulse {
+  position: relative;
+}
+
+.pin-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  animation: pulse-halo 2s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+  pointer-events: none;
+}
+
+.active-pulse {
+  animation: pulse-ring 2s infinite;
+}
+
+/* --------------------------------------------------------------------------
+   1. TOP-LEFT BRANDING & STORY EPIGRAPH BLOCK
+   -------------------------------------------------------------------------- */
+.hud-corner-top-left {
+  position: fixed;
+  top: 1.25rem;
+  left: 1.5rem;
+  z-index: 30;
+  pointer-events: auto;
+}
+
+.hud-top-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.hud-nav-btn {
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #d1d5db;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  min-height: 32px;
+}
+
+.hud-nav-btn:hover {
+  background: #ea580c;
+  color: #000000;
+  border-color: #ea580c;
+  font-weight: 700;
+}
+
+.hud-nav-btn.garage-btn {
+  border-color: rgba(234, 88, 12, 0.5);
+  color: #fb923c;
+}
+
+.hud-nav-btn.garage-btn:hover {
+  background: #ea580c;
+  color: #000000;
+}
+
+.hud-game-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(1.8rem, 3.2vw, 3rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  line-height: 1;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.95);
+  margin: 0;
+}
+
+.hud-title-divider {
+  height: 3px;
+  width: 16rem;
+  background: linear-gradient(to right, #ea580c, #f59e0b, transparent);
+  margin: 0.4rem 0;
+}
+
+.hud-game-subtitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  color: #e5e7eb;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.hud-game-epigraph {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: rgba(209, 213, 219, 0.9);
+  line-height: 1.5;
+  max-width: 260px;
+  margin-top: 0.6rem;
+}
+
+/* Mobile & Tablet HUD Drawer Toggle Buttons */
+.hud-mobile-pill-toggles {
+  display: none;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+}
+
+.hud-mobile-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(9, 19, 28, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #e5e7eb;
+  padding: 0.35rem 0.65rem;
+  border-radius: 9999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  min-height: 34px;
+  transition: all 0.2s ease;
+}
+
+.hud-mobile-toggle-btn:hover,
+.hud-mobile-toggle-btn.is-active {
+  background: #ea580c;
+  color: #000000;
+  border-color: #ea580c;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   2. TOP-RIGHT "THE 13 DISTRICTS" INDEX PANEL
+   -------------------------------------------------------------------------- */
+.hud-corner-top-right {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 30;
+  width: 14.5rem;
+  background: rgba(9, 19, 28, 0.94);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  padding: 0.85rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75);
+  transition: all 0.25s ease;
+}
+
+.hud-index-header {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #e5e7eb;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hud-index-badge {
+  font-size: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #ea580c;
+  font-weight: 700;
+}
+
+.hud-index-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.hud-index-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  min-height: 32px;
+}
+
+.hud-index-item:hover,
+.hud-index-item.is-selected {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.hud-index-item.is-selected .hud-index-text {
+  color: #fb923c;
+  font-weight: 700;
+}
+
+.hud-index-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: bold;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.hud-index-text {
+  font-size: 0.75rem;
+  color: #d1d5db;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.hud-index-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.hud-index-tag.active {
+  background: rgba(220, 38, 38, 0.3);
+  color: #f87171;
+  border: 1px solid rgba(220, 38, 38, 0.5);
+}
+
+.hud-index-tag.locked {
+  background: rgba(255, 255, 255, 0.05);
+  color: #9ca3af;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   3. BOTTOM-LEFT CARTOGRAPHY LEGEND & KM SCALE BAR
+   -------------------------------------------------------------------------- */
+.hud-corner-bottom-left {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 1.5rem;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: auto;
+  transition: all 0.25s ease;
+}
+
+.hud-legend-box {
+  width: 13.5rem;
+  background: rgba(9, 19, 28, 0.94);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  padding: 0.85rem;
+  font-size: 11px;
+  color: #d1d5db;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75);
+}
+
+.hud-legend-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: #9ca3af;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.25rem;
+}
+
+.hud-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.hud-line-sample-road {
+  width: 16px;
+  height: 2px;
+  background: #f59e0b;
+  display: inline-block;
+}
+
+.hud-line-sample-hw {
+  width: 16px;
+  height: 4px;
+  border-top: 1px solid #ea580c;
+  border-bottom: 1px solid #ea580c;
+  background: #facc15;
+  display: inline-block;
+}
+
+.hud-line-sample-border {
+  width: 16px;
+  border-bottom: 1.5px dashed #ffffff;
+  opacity: 0.7;
+  display: inline-block;
+}
+
+/* Compass & KM Scale Bar Container */
+.hud-scale-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(9, 19, 28, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.hud-compass-rose {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: #d1d5db;
+}
+
+.compass-n {
+  position: absolute;
+  top: -2px;
+  color: #ea580c;
+  font-weight: bold;
+}
+
+.compass-s {
+  position: absolute;
+  bottom: -2px;
+}
+
+.compass-w {
+  position: absolute;
+  left: 2px;
+}
+
+.compass-e {
+  position: absolute;
+  right: 2px;
+}
+
+.compass-star {
+  color: #ea580c;
+  font-size: 14px;
+}
+
+.hud-scale-ruler {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: #d1d5db;
+}
+
+.hud-scale-numbers {
+  display: flex;
+  justify-content: space-between;
+  width: 9rem;
+  margin-bottom: 2px;
+}
+
+.hud-scale-bar {
+  width: 9rem;
+  height: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+}
+
+.hud-scale-segment-filled {
+  width: 25%;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.hud-scale-segment-empty {
+  width: 25%;
+  background: transparent;
+}
+
+.hud-scale-caption {
+  font-size: 8px;
+  color: #9ca3af;
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   4. BOTTOM-CENTER PILLAR TAGLINE & ZOOM CONTROLS
+   -------------------------------------------------------------------------- */
+.hud-bottom-center-ctrls {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+.hud-zoom-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(9, 19, 28, 0.94);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+.hud-zoom-pill button {
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+  border-radius: 4px;
+}
+
+.hud-zoom-pill button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fb923c;
+}
+
+.hud-zoom-pill button.is-reset {
+  color: #ea580c;
+  font-weight: bold;
+}
+
+.hud-zoom-pill button.is-reset:hover {
+  background: #ea580c;
+  color: #000000;
+}
+
+.ctrl-divider {
+  opacity: 0.25;
+  color: #ffffff;
+}
+
+.hud-pillar-motto {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  letter-spacing: 0.28em;
+  color: #e5e7eb;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  padding: 0.25rem 1rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   5. BOTTOM-RIGHT INDIA LOCATOR & "THE WORLD" INSET BOX
+   -------------------------------------------------------------------------- */
+.hud-corner-bottom-right {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 30;
+  width: 20rem;
+  background: rgba(9, 19, 28, 0.95);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75);
+  overflow: hidden;
+}
+
+.hud-locator-grid {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  padding: 0.75rem;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.hud-india-mini-map {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding-right: 0.5rem;
+}
+
+.india-svg-box {
+  width: 5.5rem;
+  height: 5.5rem;
+}
+
+.india-tagline {
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: #f59e0b;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+.hud-world-lore {
+  font-size: 10px;
+  color: #d1d5db;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.world-lore-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  color: #ffffff;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.world-lore-highlight {
+  color: #fde68a;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   6. MAIN INTERACTIVE MAP CANVAS STAGE
+   -------------------------------------------------------------------------- */
+.map-canvas-stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.map-canvas-stage:active {
+  cursor: grabbing;
+}
+
+.map-canvas-container {
+  position: relative;
+  width: 1280px;
+  height: 820px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
+}
+
+/* Neighboring Territory Labels */
+.neighbor-territory-label {
+  position: absolute;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: rgba(148, 163, 184, 0.45);
+  pointer-events: none;
+  user-select: none;
+}
+
+.label-pakistan {
+  top: 22%;
+  left: 12%;
+}
+
+.label-haryana {
+  top: 9%;
+  right: 22%;
+}
+
+.label-up {
+  top: 18%;
+  right: 12%;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.label-mp {
+  bottom: 28%;
+  right: 10%;
+}
+
+.label-gujarat {
+  bottom: 12%;
+  left: 20%;
+}
+
+/* Base Map Image with Picture Tag */
+.base-map-picture {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.base-map-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 25px 60px rgba(0, 0, 0, 0.92));
+}
+
+/* Illustrated Relief Fallback SVG */
+.fallback-relief-svg {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter: drop-shadow(0 25px 60px rgba(0, 0, 0, 0.92));
+}
+
+/* Interactive Pins Layer */
+.interactive-pins-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+}
+
+.map-pin-anchor {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.map-pin-anchor:focus-visible {
+  outline: 2px solid #ea580c;
+  outline-offset: 4px;
+  border-radius: 9999px;
+}
+
+.map-pin-anchor:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+  z-index: 25;
+}
+
+.map-pin-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(7, 16, 24, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 0.2rem 0.55rem 0.2rem 0.25rem;
+  border-radius: 9999px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.85);
+  transition: all 0.2s ease;
+}
+
+.map-pin-anchor:hover .map-pin-pill {
+  background: #000000;
+  border-color: #ea580c;
+  box-shadow: 0 0 20px rgba(234, 88, 12, 0.5);
+}
+
+.map-pin-pill.pill-active {
+  border-color: rgba(220, 38, 38, 0.8);
+  box-shadow: 0 0 16px rgba(220, 38, 38, 0.4);
+}
+
+.map-pin-num-circle {
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.map-pin-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.pin-status-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  font-weight: bold;
+  padding: 1px 4px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.pin-status-tag.tag-active {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.pin-status-tag.tag-future {
+  background: rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+}
+
+.story-start-ribbon {
+  margin-top: 0.25rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 3px;
+  background: #dc2626;
+  color: #ffffff;
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.6);
+  border: 1px solid rgba(254, 202, 202, 0.4);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   7. SLIDE-OVER DISTRICT INSPECTION DRAWER
+   -------------------------------------------------------------------------- */
+.district-slide-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  max-width: 440px;
+  background: rgba(8, 17, 25, 0.97);
+  backdrop-filter: blur(18px);
+  border-left: 1px solid rgba(234, 88, 12, 0.4);
+  z-index: 40;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -15px 0 45px rgba(0, 0, 0, 0.9);
+}
+
+.district-slide-drawer.is-open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.drawer-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.drawer-num-badge {
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.drawer-rto-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #fb923c;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.drawer-title-text {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 1;
+  margin: 0;
+}
+
+.drawer-close-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e5e7eb;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.drawer-close-btn:hover {
+  background: #ea580c;
+  color: #000000;
+  border-color: #ea580c;
+}
+
+.drawer-body-scroll {
+  padding: 1.25rem;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Status Strip */
+.drawer-status-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.status-badge-active {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #f87171;
+  background: rgba(220, 38, 38, 0.25);
+  border: 1px solid rgba(220, 38, 38, 0.5);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.status-badge-locked {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: #9ca3af;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.status-region-tag {
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+/* Full unclipped quote with word-break and overflow-wrap */
+.drawer-quote-callout {
+  border-left: 2px solid #ea580c;
+  padding-left: 0.85rem;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: #fde68a;
+  line-height: 1.6;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  margin: 0;
+}
+
+.drawer-synopsis-text {
+  font-size: 0.775rem;
+  color: #d1d5db;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.drawer-intel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+
+.intel-metric-card {
+  padding: 0.75rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.intel-metric-label {
+  font-size: 9px;
+  color: #9ca3af;
+  letter-spacing: 0.06em;
+}
+
+.intel-metric-val {
+  font-weight: 700;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.intel-metric-val.white {
+  color: #ffffff;
+}
+
+.intel-metric-val.orange {
+  color: #fb923c;
+}
+
+.drawer-pois-header {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #fb923c;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+
+.drawer-pois-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.drawer-poi-pill {
+  padding: 0.65rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  color: #e5e7eb;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  line-height: 1.4;
+}
+
+.drawer-vehicles-card {
+  padding: 0.85rem;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.drawer-vehicles-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #9ca3af;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.drawer-garage-link {
+  color: #fb923c;
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transition: color 0.15s ease;
+}
+
+.drawer-garage-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.drawer-vehicles-list {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #ffffff;
+  line-height: 1.45;
+}
+
+.drawer-vehicle-disclaimer {
+  font-size: 9px;
+  color: #6b7280;
+  margin-top: 0.4rem;
+  font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   Custom Scrollbars
+   -------------------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #071018;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ea580c;
+  border-radius: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Layout Adjustments
+   -------------------------------------------------------------------------- */
+@media (max-width: 1280px) {
+  .hud-corner-bottom-right {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hud-mobile-pill-toggles {
+    display: flex;
+  }
+  .hud-corner-top-right {
+    display: none;
+    top: 5rem;
+    right: 1rem;
+    z-index: 35;
+  }
+  .hud-corner-top-right.mobile-visible {
+    display: block;
+    animation: fadeIn 0.2s ease;
+  }
+  .hud-corner-bottom-left {
+    display: none;
+    bottom: 5.5rem;
+    left: 1rem;
+    z-index: 35;
+  }
+  .hud-corner-bottom-left.mobile-visible {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+  }
+}
+
+@media (max-width: 768px) {
+  .pin-status-tag {
+    display: none;
+  }
+  .map-pin-pill {
+    padding: 0.15rem 0.35rem 0.15rem 0.2rem;
+    gap: 0.25rem;
+  }
+  .map-pin-name {
+    font-size: 0.65rem;
+  }
+  .story-start-ribbon {
+    font-size: 8px;
+    padding: 0.1rem 0.4rem;
+  }
+  .hud-corner-top-left {
+    top: 0.75rem;
+    left: 0.75rem;
+    right: 0.75rem;
+  }
+  .hud-game-epigraph {
+    display: none;
+  }
+  .hud-game-title {
+    font-size: clamp(1.4rem, 5vw, 2rem);
+  }
+  .hud-title-divider {
+    width: 100%;
+    max-width: 12rem;
+  }
+  .district-slide-drawer {
+    max-width: 100%;
+    width: 100%;
+  }
+  .drawer-close-btn {
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .drawer-intel-grid {
+    grid-template-columns: 1fr;
+  }
+  .hud-zoom-pill {
+    padding: 0.25rem 0.6rem;
+    font-size: 10px;
+  }
+  .hud-zoom-pill button {
+    padding: 0.2rem 0.35rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hud-top-nav-links {
+    gap: 0.4rem;
+  }
+  .hud-nav-btn {
+    font-size: 9px;
+    padding: 0.25rem 0.5rem;
+    min-height: 30px;
+  }
+  .hud-game-subtitle {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+  }
+  .hud-pillar-motto {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pin-pulse::after,
+  .active-pulse {
+    animation: none;
+  }
+  .map-canvas-container,
+  .district-slide-drawer {
+    transition: none !important;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Transit corridor footer */
+.transit-corridor-footer {
+  height: 60px;
+  background: rgba(7, 16, 24, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  z-index: 35;
+}

@@ -1,0 +1,1127 @@
+/* ==========================================================================
+   BROKEN HORIZON — MEHTA GARAGE TUNING LAB & VEHICLE CUSTOMIZER
+   Atmosphere: High-Tech Underground Workshop, Amber Halogen Lighting, Blueprint Grid
+   ========================================================================== */
+
+.garage-explorer-page {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background: radial-gradient(circle at 50% 10%, #151922 0%, #0a0b0e 70%, #050608 100%);
+  color: #f4ede0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* ================= Top Navbar ================= */
+.garage-top-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: rgba(10, 11, 14, 0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(217, 119, 6, 0.2);
+}
+
+.garage-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.btn-garage-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #d1d5db;
+  padding: 0.55rem 1rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-garage-back:hover {
+  background: rgba(217, 119, 6, 0.15);
+  border-color: #d97706;
+  color: #f59e0b;
+}
+
+.garage-brand-block {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.brand-icon-wrap {
+  width: 36px;
+  height: 36px;
+  background: rgba(217, 119, 6, 0.12);
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.garage-sub-title {
+  display: block;
+  font-size: 0.65rem;
+  color: #9ca3af;
+  letter-spacing: 0.12em;
+}
+
+.garage-main-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+}
+
+.garage-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.operative-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(16, 18, 23, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.45rem 0.85rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  color: #e5e7eb;
+}
+
+.btn-garage-map {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #d97706;
+  color: #000;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  padding: 0.55rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-garage-map:hover {
+  background: #f59e0b;
+  transform: translateY(-1px);
+}
+
+/* ================= Workbench Layout ================= */
+.garage-workbench-layout {
+  flex: 1;
+  padding: 1.5rem 2rem 3rem 2rem;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ================= Vehicle Canvas Area ================= */
+.garage-vehicle-viewport {
+  position: relative;
+  width: 100%;
+  min-height: 440px;
+  background: linear-gradient(180deg, #0e1117 0%, #151821 70%, #0d0f14 100%);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.8), 0 16px 40px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Overhead Workshop Halogens */
+.workshop-lighting-rig {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.light-tube {
+  width: 180px;
+  height: 4px;
+  background: #fef08a;
+  box-shadow: 0 0 20px 4px rgba(254, 240, 138, 0.4), 0 0 40px 8px rgba(245, 158, 11, 0.2);
+  border-radius: 2px;
+}
+
+.light-cone {
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 380px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 75%);
+  pointer-events: none;
+}
+
+/* Technical Blueprint Grid */
+.garage-blueprint-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+.garage-spec-stamp {
+  position: absolute;
+  top: 1rem;
+  left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.65rem;
+  color: #6b7280;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.stamp-id {
+  color: #d97706;
+  font-weight: 700;
+}
+
+/* Vehicle Vector Rig */
+.vehicle-svg-container {
+  position: relative;
+  width: 90%;
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.is-suspension-rebounding {
+  animation: suspensionBounceAnim 0.55s ease-out;
+}
+
+@keyframes suspensionBounceAnim {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(14px) rotate(0.4deg); }
+  60% { transform: translateY(-8px) rotate(-0.3deg); }
+  85% { transform: translateY(3px); }
+  100% { transform: translateY(0); }
+}
+
+.vehicle-vector-rig {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.6));
+}
+
+/* Hotspots Overlay */
+.vehicle-hotspots-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+}
+
+.hotspot-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.hotspot-trigger {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(15, 17, 23, 0.9);
+  border: 1.5px solid #d97706;
+  color: #f59e0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+  transition: all 0.2s ease;
+}
+
+.hotspot-trigger:hover,
+.hotspot-node.is-active .hotspot-trigger {
+  transform: scale(1.15);
+  background: #d97706;
+  color: #000;
+  border-color: #fff;
+}
+
+.hotspot-pulse {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid #f59e0b;
+  opacity: 0.6;
+  animation: hotspotPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes hotspotPing {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.hotspot-tooltip {
+  position: absolute;
+  bottom: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f1115;
+  border: 1px solid rgba(217, 119, 6, 0.4);
+  padding: 0.4rem 0.65rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  z-index: 20;
+}
+
+.hotspot-tooltip-title {
+  font-size: 0.68rem;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.hotspot-tooltip-hint {
+  font-size: 0.6rem;
+  color: #d97706;
+}
+
+.vehicle-interactive-hint {
+  position: absolute;
+  bottom: 0.85rem;
+  right: 1.25rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: #6b7280;
+  pointer-events: none;
+}
+
+/* ================= Workbench Split Section ================= */
+.workbench-control-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2rem;
+}
+
+/* ================= Tuning Controls Panel ================= */
+.tuning-controls-panel {
+  background: rgba(14, 16, 21, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1.5rem;
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.presets-selector-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.presets-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.presets-title {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: #9ca3af;
+}
+
+.presets-buttons-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.preset-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #d1d5db;
+  padding: 0.5rem 0.85rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.preset-btn:hover {
+  background: rgba(217, 119, 6, 0.1);
+  border-color: rgba(217, 119, 6, 0.35);
+  color: #f59e0b;
+}
+
+.preset-btn.is-active {
+  background: #d97706;
+  border-color: #f59e0b;
+  color: #000;
+  font-weight: 700;
+}
+
+/* Category Tabs */
+.tuning-category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding-bottom: 0.5rem;
+}
+
+.tuning-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #9ca3af;
+  padding: 0.55rem 0.85rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-family: monospace;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tuning-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+
+.tuning-tab-btn.is-active {
+  background: rgba(217, 119, 6, 0.15);
+  border-color: #d97706;
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+/* Parts Grid */
+.subpanel-title {
+  margin: 0 0 1rem 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: #d97706;
+}
+
+.parts-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+}
+
+.part-card {
+  background: rgba(22, 26, 34, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.part-card:hover {
+  border-color: rgba(217, 119, 6, 0.4);
+  transform: translateY(-2px);
+  background: rgba(22, 26, 34, 0.9);
+}
+
+.part-card.is-selected {
+  border-color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
+  box-shadow: 0 0 16px rgba(217, 119, 6, 0.15);
+}
+
+.part-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.part-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.part-desc {
+  font-size: 0.72rem;
+  color: #9ca3af;
+  line-height: 1.4;
+  margin: 0 0 0.85rem 0;
+}
+
+.part-stats-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #d97706;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.5rem;
+}
+
+/* Tire PSI Slider */
+.tire-psi-controller {
+  margin-top: 1.5rem;
+  background: rgba(18, 21, 28, 0.75);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  border-radius: 6px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.psi-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+}
+
+.psi-value {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.psi-range-input {
+  width: 100%;
+  accent-color: #d97706;
+  cursor: pointer;
+  height: 6px;
+}
+
+.psi-range-markers {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #6b7280;
+}
+
+.psi-explanation {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #d1d5db;
+  line-height: 1.4;
+}
+
+/* Livery Swatches */
+.livery-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+}
+
+.livery-swatch-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: rgba(22, 26, 34, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.livery-swatch-card:hover {
+  border-color: rgba(217, 119, 6, 0.4);
+}
+
+.livery-swatch-card.is-selected {
+  border-color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
+}
+
+.swatch-color-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.swatch-check {
+  color: #ffffff;
+}
+
+.swatch-name {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.swatch-desc {
+  margin: 0.2rem 0 0 0;
+  font-size: 0.68rem;
+  color: #9ca3af;
+  line-height: 1.3;
+}
+
+/* ================= Dyno & Telemetry Panel ================= */
+.dyno-telemetry-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dyno-ignition-card {
+  background: rgba(14, 16, 21, 0.85);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  border-radius: 8px;
+  padding: 1.5rem;
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.dyno-header-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dyno-subtitle {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  letter-spacing: 0.1em;
+}
+
+.dyno-title {
+  margin: 0.15rem 0 0 0;
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+
+.ignition-status-pill {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  padding: 0.3rem 0.65rem;
+  border-radius: 4px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.ignition-status-pill.is-active {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.3);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.2);
+}
+
+/* Tachometer Dial */
+.tachometer-instrument {
+  position: relative;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tachometer-svg {
+  width: 100%;
+  height: auto;
+}
+
+.tachometer-digital-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin-top: -15px;
+}
+
+.rpm-digits {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.rpm-unit {
+  font-size: 0.75rem;
+  color: #d97706;
+}
+
+/* Dyno Buttons */
+.dyno-buttons-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.btn-ignition-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-family: monospace;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-ignition-toggle:hover {
+  background: #ef4444;
+  color: #000;
+}
+
+.btn-ignition-toggle.is-running {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.btn-ignition-toggle.is-running:hover {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.btn-throttle-rev {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(217, 119, 6, 0.2);
+  border: 1px solid #d97706;
+  color: #f59e0b;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-family: monospace;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.1s ease;
+}
+
+.btn-throttle-rev:hover:not(:disabled) {
+  background: #d97706;
+  color: #000;
+}
+
+.btn-throttle-rev.is-pressing {
+  transform: scale(0.96);
+  background: #f59e0b;
+  color: #000;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+}
+
+.btn-throttle-rev.is-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: #4b5563;
+  color: #6b7280;
+}
+
+.dyno-tip-note {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  text-align: center;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Telemetry Metrics Deck */
+.telemetry-metrics-deck {
+  background: rgba(14, 16, 21, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1.5rem;
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.deck-title {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: #d97706;
+}
+
+.metrics-list-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.metric-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+}
+
+.metric-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #9ca3af;
+}
+
+.metric-icon {
+  color: #d97706;
+}
+
+.metric-val {
+  font-weight: 700;
+}
+
+.metric-bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.metric-bar-fill {
+  height: 100%;
+  background: #d97706;
+  border-radius: 3px;
+  transition: width 0.35s ease;
+}
+
+.metric-bar-fill.fill-flotation {
+  background: linear-gradient(90deg, #d97706, #fbbf24);
+}
+
+.metric-bar-fill.fill-armor {
+  background: linear-gradient(90deg, #b93b2a, #ea580c);
+}
+
+.metric-bar-fill.fill-fuel {
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
+}
+
+.metric-bar-fill.fill-stealth {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.weights-power-summary {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.68rem;
+}
+
+.summary-pill {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.summary-pill span {
+  color: #6b7280;
+}
+
+.summary-pill strong {
+  color: #ffffff;
+}
+
+.btn-export-tuning-pass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #d97706;
+  color: #000;
+  font-weight: 800;
+  font-size: 0.75rem;
+  font-family: monospace;
+  padding: 0.85rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  transition: all 0.2s ease;
+}
+
+.btn-export-tuning-pass:hover {
+  background: #f59e0b;
+  transform: translateY(-1px);
+}
+
+/* ================= Tuning Pass Modal ================= */
+.tuning-pass-modal {
+  max-width: 680px;
+  width: 90%;
+  background: #0f1218;
+  border: 1px solid #d97706;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+}
+
+.tuning-pass-card {
+  position: relative;
+  background: #151821;
+  border: 1px dashed rgba(217, 119, 6, 0.4);
+  border-radius: 6px;
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+.pass-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-25deg);
+  font-size: 5rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.02);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.pass-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(217, 119, 6, 0.3);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pass-garage-brand {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.pass-sub-dept {
+  font-size: 0.62rem;
+  color: #9ca3af;
+  letter-spacing: 0.12em;
+}
+
+.pass-title {
+  margin: 0.15rem 0 0 0;
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+
+.pass-id-badge {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+}
+
+.id-tag {
+  font-size: 0.6rem;
+  color: #6b7280;
+}
+
+.id-num {
+  font-size: 0.85rem;
+  color: #d97706;
+}
+
+.pass-operative-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: 0.68rem;
+}
+
+.pass-operative-row .label {
+  display: block;
+  color: #6b7280;
+  margin-bottom: 0.2rem;
+}
+
+.status-approved {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #22c55e;
+}
+
+.pass-specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+}
+
+.spec-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.35rem;
+}
+
+.spec-k {
+  color: #9ca3af;
+}
+
+.pass-telemetry-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  text-align: center;
+  background: rgba(217, 119, 6, 0.08);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.telemetry-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-num {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.stat-unit {
+  font-size: 0.58rem;
+  color: #9ca3af;
+  margin-top: 0.15rem;
+}
+
+.pass-footer-barcode-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 0.85rem;
+}
+
+.barcode-graphic {
+  width: 140px;
+  height: 28px;
+  background-image: repeating-linear-gradient(to right, #ffffff, #ffffff 2px, transparent 2px, transparent 5px, #ffffff 5px, #ffffff 8px, transparent 8px, transparent 10px);
+}
+
+.auth-stamp {
+  text-align: right;
+  font-size: 0.6rem;
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-stamp strong {
+  color: #ffffff;
+}
+
+.pass-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+/* ================= Responsive Breakpoints ================= */
+@media (max-width: 1024px) {
+  .workbench-control-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .garage-top-navbar {
+    padding: 0.85rem 1rem;
+  }
+
+  .garage-workbench-layout {
+    padding: 1rem;
+  }
+
+  .garage-vehicle-viewport {
+    min-height: 320px;
+  }
+
+  .parts-options-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pass-specs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pass-telemetry-strip {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+}

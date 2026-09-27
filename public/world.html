@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BROKEN HORIZON — Rajasthan • 13 Districts • One Story</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Oswald:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #071018; color: #f3f4f6; overflow: hidden; user-select: none; }
+    .font-display { font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .ocean-slate {
+      background: radial-gradient(circle at 50% 48%, #102030 0%, #071018 70%, #04080d 100%);
+    }
+    @keyframes pulse-halo {
+      0% { transform: scale(1); opacity: 0.85; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+    .pin-pulse::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 9999px;
+      border: 2px solid currentColor;
+      animation: pulse-halo 2s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+    }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #071018; }
+    ::-webkit-scrollbar-thumb { background: #ea580c; border-radius: 3px; }
+  </style>
+</head>
+<body class="h-screen w-screen relative ocean-slate overflow-hidden">
+
+  <!-- ===================================================================== -->
+  <!-- 1. TOP-LEFT BRANDING & STORY EPIGRAPH (MATCHES REFERENCE IMAGE)       -->
+  <!-- ===================================================================== -->
+  <div class="fixed top-5 left-6 z-30 pointer-events-auto">
+    <div class="flex items-center gap-3 mb-2">
+      <a href="/" class="px-2.5 py-1 rounded bg-black/70 hover:bg-orange-600 hover:text-black border border-white/15 text-[10px] font-mono text-gray-300 transition">
+        ← MAIN PORTAL
+      </a>
+      <a href="/garage" class="px-2.5 py-1 rounded bg-black/70 hover:bg-white/10 border border-orange-500/40 text-[10px] font-mono text-orange-400 transition">
+        🚗 92-VEHICLE GARAGE
+      </a>
+    </div>
+    <h1 class="font-display text-4xl sm:text-5xl font-extrabold uppercase tracking-wider text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
+      BROKEN HORIZON
+    </h1>
+    <div class="h-[3px] w-64 bg-gradient-to-r from-orange-500 via-amber-400 to-transparent my-1.5"></div>
+    <p class="font-display text-xs sm:text-sm tracking-[0.22em] text-gray-200 uppercase">
+      RAJASTHAN &bull; 13 DISTRICTS &bull; ONE STORY
+    </p>
+    <p class="text-xs italic text-gray-300/90 mt-2.5 leading-relaxed max-w-[240px] hidden sm:block">
+      Different cities. Different people.<br/>
+      Same truth.<br/>
+      A broken horizon.
+    </p>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 2. TOP-RIGHT "THE 13 DISTRICTS" CLICKABLE INDEX PANEL                 -->
+  <!-- ===================================================================== -->
+  <aside class="fixed top-5 right-5 z-30 w-52 bg-[#09131c]/90 backdrop-blur-md border border-white/15 rounded-lg p-3.5 shadow-2xl hidden md:block">
+    <div class="font-display text-xs tracking-widest uppercase text-gray-200 border-b border-white/10 pb-2 mb-2 flex items-center justify-between">
+      <span>THE 13 DISTRICTS</span>
+      <span class="text-[9px] font-mono text-orange-400">CLICK PIN</span>
+    </div>
+    <div id="district-legend-list" class="space-y-1 max-h-[380px] overflow-y-auto pr-1"></div>
+  </aside>
+
+  <!-- ===================================================================== -->
+  <!-- 3. BOTTOM-LEFT MAP LEGEND, COMPASS ROSE & KM SCALE BAR                -->
+  <!-- ===================================================================== -->
+  <div class="fixed bottom-5 left-6 z-30 hidden lg:flex flex-col gap-3 pointer-events-auto">
+    <div class="w-52 bg-[#09131c]/90 backdrop-blur-md border border-white/15 rounded-lg p-3.5 text-[11px] text-gray-300 space-y-1.5 shadow-2xl">
+      <div class="flex items-center gap-2.5"><span class="text-amber-400">🏙️</span><span>Major City</span></div>
+      <div class="flex items-center gap-2.5"><span class="text-gray-300">🏘️</span><span>Town / Village</span></div>
+      <div class="flex items-center gap-2.5"><span class="text-orange-400">🏰</span><span>Fort / Historical Place</span></div>
+      <div class="flex items-center gap-2.5"><span class="text-red-400">🏭</span><span>Industrial Area</span></div>
+      <div class="flex items-center gap-2.5"><span class="text-sky-400">✈️</span><span>Airport</span></div>
+      <div class="flex items-center gap-2.5"><span class="text-emerald-400">🚆</span><span>Train Station</span></div>
+      <div class="flex items-center gap-2.5"><span class="text-blue-400">⚓</span><span>Port / Boat</span></div>
+      <div class="flex items-center gap-2.5">
+        <span class="w-4 h-0.5 bg-amber-400 inline-block"></span><span>Main Road</span>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <span class="w-4 h-1 border-y border-orange-500 bg-yellow-400 inline-block"></span><span>Highway (Horizon Line)</span>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <span class="w-4 border-b border-dashed border-gray-300 inline-block"></span><span>District Border</span>
+      </div>
+    </div>
+
+    <!-- Compass Rose + 0–100 km Scale Bar -->
+    <div class="flex items-center gap-4 bg-[#09131c]/80 backdrop-blur px-3.5 py-2 rounded-lg border border-white/10">
+      <div class="relative w-10 h-10 rounded-full border border-white/25 flex items-center justify-center text-[9px] font-mono text-gray-300">
+        <span class="absolute -top-1 text-orange-400 font-bold">N</span>
+        <span class="absolute -bottom-1">S</span>
+        <span class="absolute -left-1">W</span>
+        <span class="absolute -right-1">E</span>
+        <span class="text-orange-500 text-sm">✦</span>
+      </div>
+      <div class="text-[9px] font-mono text-gray-300">
+        <div class="flex justify-between w-36 mb-0.5">
+          <span>0</span><span>25</span><span>50</span><span>75</span><span>100 km</span>
+        </div>
+        <div class="w-36 h-1.5 border border-white/40 flex">
+          <div class="w-1/4 bg-white/80"></div>
+          <div class="w-1/4 bg-transparent"></div>
+          <div class="w-1/4 bg-white/80"></div>
+          <div class="w-1/4 bg-transparent"></div>
+        </div>
+        <div class="text-[8px] text-gray-400 text-center mt-0.5">(Game Scale — Approx.)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 4. BOTTOM-CENTER PILLAR TAGLINE & ZOOM CONTROLS                       -->
+  <!-- ===================================================================== -->
+  <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2">
+    <div class="flex items-center gap-2 bg-[#09131c]/90 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-full text-xs font-mono">
+      <button onclick="setZoom(1)" class="px-2 hover:text-orange-400">100%</button>
+      <span class="text-white/20">|</span>
+      <button onclick="setZoom(1.35)" class="px-2 hover:text-orange-400">ZOOM +</button>
+      <span class="text-white/20">|</span>
+      <button onclick="resetAtlasView()" class="px-2 text-orange-400 font-bold">RESET MAP</button>
+    </div>
+    <div class="font-display text-xs sm:text-sm tracking-[0.28em] text-gray-300 uppercase bg-black/60 px-4 py-1 rounded border border-white/10">
+      EXPLORE &nbsp;/&nbsp; FIGHT &nbsp;/&nbsp; UNCOVER &nbsp;/&nbsp; SURVIVE
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 5. BOTTOM-RIGHT INDIA LOCATOR & "THE WORLD" INSET BOX                 -->
+  <!-- ===================================================================== -->
+  <div class="fixed bottom-5 right-5 z-30 w-80 bg-[#09131c]/95 backdrop-blur-md border border-white/15 rounded-lg overflow-hidden shadow-2xl hidden xl:block">
+    <div class="grid grid-cols-12 p-3 gap-3 items-center">
+      <!-- Mini India Map Silhouette with Rajasthan Highlighted -->
+      <div class="col-span-5 flex flex-col items-center justify-center border-r border-white/10 pr-2">
+        <svg viewBox="0 0 120 130" class="w-24 h-24">
+          <!-- Simplified India Silhouette -->
+          <path d="M45 8 L62 12 L68 28 L88 38 L108 35 L112 52 L92 62 L82 78 L62 122 L48 122 L35 82 L18 65 L15 45 L35 28 Z" fill="#263240" stroke="#475569" stroke-width="1.5"/>
+          <!-- Highlighted Rajasthan Polygon -->
+          <path d="M22 40 L44 32 L52 48 L42 62 L22 56 Z" fill="#f59e0b" stroke="#ffffff" stroke-width="1"/>
+        </svg>
+        <div class="text-[9px] font-display tracking-widest text-amber-400 uppercase mt-1">RAJASTHAN, INDIA</div>
+      </div>
+      <!-- The World Lore Text -->
+      <div class="col-span-7 text-[10px] text-gray-300 leading-relaxed space-y-1.5">
+        <div class="font-display text-xs text-white tracking-wider uppercase">THE WORLD</div>
+        <p>
+          A vast and diverse landscape of 13 districts, from the pink streets of Jaipur to the golden dunes of Jaisalmer, from the lakes of Udaipur to the forests of Sawai Madhopur.
+        </p>
+        <p class="text-amber-300 font-semibold">
+          One road. Countless stories.<br/>This is Rajasthan. This is your world.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 6. MAIN INTERACTIVE ILLUSTRATED MAP CANVAS                            -->
+  <!-- ===================================================================== -->
+  <main id="map-stage" class="w-full h-full flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing">
+    <div id="map-container" class="relative w-[1280px] h-[820px] transition-transform duration-300 ease-out origin-center">
+
+      <!-- Neighboring Territory Labels -->
+      <span class="absolute top-[22%] left-[18%] font-display text-xs tracking-[0.35em] text-slate-500/60 pointer-events-none">PAKISTAN</span>
+      <span class="absolute top-[9%] right-[23%] font-display text-xs tracking-[0.3em] text-slate-500/60 pointer-events-none">HARYANA</span>
+      <span class="absolute top-[18%] right-[16%] font-display text-[10px] tracking-[0.25em] text-slate-500/60 pointer-events-none text-center">UTTAR<br/>PRADESH</span>
+      <span class="absolute bottom-[34%] right-[11%] font-display text-xs tracking-[0.3em] text-slate-500/60 pointer-events-none">MADHYA PRADESH</span>
+      <span class="absolute bottom-[10%] left-[22%] font-display text-xs tracking-[0.3em] text-slate-500/60 pointer-events-none">GUJARAT</span>
+
+      <!--
+        YOUR ILLUSTRATED RAJASTHAN MAP IMAGE
+      -->
+      <img
+        id="base-map-img"
+        src="/assets/rajasthan-illustrated-map.png"
+        alt="Broken Horizon — 13 Districts of Rajasthan Map"
+        onerror="this.style.display='none'; document.getElementById('fallback-relief-svg').classList.remove('hidden');"
+        class="w-full h-full object-contain pointer-events-none select-none drop-shadow-[0_25px_50px_rgba(0,0,0,0.85)]"
+      />
+
+      <!-- Multi-Biome Illustrated SVG Fallback (Renders automatically if PNG isn't in /assets yet) -->
+      <svg id="fallback-relief-svg" viewBox="0 0 1280 820" class="hidden w-full h-full pointer-events-none">
+        <defs>
+          <linearGradient id="rajasthanBiomeGrad" x1="0%" y1="35%" x2="95%" y2="65%">
+            <stop offset="0%" stop-color="#d99b4e"/>
+            <stop offset="32%" stop-color="#b87d4b"/>
+            <stop offset="58%" stop-color="#5a6f3b"/>
+            <stop offset="85%" stop-color="#3a5a32"/>
+            <stop offset="100%" stop-color="#2e4c2b"/>
+          </linearGradient>
+        </defs>
+        <!-- Outer Illuminated State Shape -->
+        <path
+          d="M 615 55 L 745 115 L 895 215 L 1045 365 L 1145 415 L 1110 485 L 965 510 L 945 620 L 795 625 L 665 695 L 555 775 L 435 675 L 385 565 L 225 515 L 115 395 L 155 275 L 325 265 L 435 175 L 545 125 Z"
+          fill="url(#rajasthanBiomeGrad)"
+          stroke="#fde68a"
+          stroke-width="3"
+        />
+        <!-- Internal Dashed District Borders -->
+        <g stroke="#ffffff" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.55" fill="none">
+          <path d="M 435 175 L 545 340 L 385 565"/>
+          <path d="M 615 215 L 795 225 L 855 320 L 665 360 Z"/>
+          <path d="M 545 340 L 765 415 L 795 625"/>
+          <path d="M 325 265 L 425 420 L 225 515"/>
+        </g>
+        <!-- Golden Highway Network -->
+        <g stroke="#facc15" stroke-width="3.5" opacity="0.85" fill="none">
+          <path d="M 740 275 L 595 365 L 505 465 L 475 645"/>
+          <path d="M 740 275 L 865 285 L 945 415 L 865 545"/>
+          <path d="M 595 365 L 435 335 L 245 365 L 295 495"/>
+        </g>
+      </svg>
+
+      <!-- INTERACTIVE 13 NUMBERED DISTRICT PINS OVERLAY -->
+      <div id="interactive-pins-layer" class="absolute inset-0"></div>
+    </div>
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- 7. SLIDE-OVER DISTRICT DOSSIER DRAWER (OPENS WHEN ANY PIN IS CLICKED) -->
+  <!-- ===================================================================== -->
+  <div id="district-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-[#081119]/95 backdrop-blur-xl border-l border-orange-500/40 z-40 translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+    <div class="p-5 border-b border-white/10 flex items-center justify-between bg-black/40">
+      <div class="flex items-center gap-2.5">
+        <span id="drawer-num-badge" class="w-7 h-7 rounded-full flex items-center justify-center font-display font-bold text-sm text-white bg-red-600">1</span>
+        <div>
+          <div id="drawer-rto" class="text-[10px] font-mono text-orange-400 uppercase tracking-widest">SECTOR RJ-14 // STORY START</div>
+          <h2 id="drawer-title" class="font-display text-2xl font-bold text-white uppercase leading-none">JAIPUR</h2>
+        </div>
+      </div>
+      <button onclick="closeDrawer()" class="px-3 py-1 rounded bg-white/10 hover:bg-orange-600 hover:text-black text-xs font-mono font-bold transition">
+        CLOSE ✕
+      </button>
+    </div>
+
+    <div class="p-5 space-y-5 overflow-y-auto flex-1">
+      <blockquote id="drawer-quote" class="border-l-2 border-orange-500 pl-3.5 text-xs italic text-amber-200 leading-relaxed"></blockquote>
+      <p id="drawer-desc" class="text-xs text-gray-300 leading-relaxed"></p>
+
+      <div class="grid grid-cols-2 gap-2.5 font-mono text-[11px]">
+        <div class="p-3 rounded bg-white/[0.03] border border-white/10">
+          <div class="text-[9px] text-gray-400">BIOME &amp; LANDMARK</div>
+          <div id="drawer-biome" class="text-white font-bold mt-0.5"></div>
+        </div>
+        <div class="p-3 rounded bg-white/[0.03] border border-white/10">
+          <div class="text-[9px] text-gray-400">CAMPAIGN ACT</div>
+          <div id="drawer-act" class="text-orange-400 font-bold mt-0.5"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="text-[10px] font-mono text-orange-400 uppercase tracking-wider mb-2">// KEY SECTOR LANDMARKS &amp; MISSIONS</div>
+        <div id="drawer-pois" class="space-y-2"></div>
+      </div>
+
+      <div class="p-3.5 rounded bg-black/50 border border-white/10">
+        <div class="flex justify-between text-[10px] font-mono text-gray-400 mb-1">
+          <span>DISTRICT FLEET SPAWNS</span>
+          <a href="/garage" class="text-orange-400 hover:underline">VIEW ALL 92 →</a>
+        </div>
+        <div id="drawer-vehicles" class="text-xs font-mono text-white"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================================
+    // ALL 13 DISTRICTS MATCHING THE EXACT NUMBERING & COLORS OF YOUR MAP IMAGE
+    // ============================================================================
+    const DISTRICTS_DATA = [
+      {
+        num: 1, id: "jaipur", name: "JAIPUR", label: "Jaipur (Story Start)", color: "#dc2626",
+        xPct: 62.5, yPct: 28.5, storyStart: true, rto: "RJ-14",
+        biome: "Pink City Forts & Industrial Ring Road", act: "Prologue & Ch. 1–2",
+        quote: '"Every road in Jaipur starts with an engine and ends with a question."',
+        desc: "Arjun Mehta's home turf. Historic fortresses and crowded bazaars collide with late-night transport yards, highway depots, and the Mehta family garage.",
+        vehicles: "Tara 1613 Freight Truck • Mahendra Thar-Roxx • Chetak RE-Auto • PinkCity Metro",
+        pois: [
+          "Mehta Garage (Arjun Home Base & Scene 3 Debt Brawl)",
+          "Jaipur Industrial Yard & Ring Road Depot (Mission 1 Ambush)",
+          "Amer Fort Ridge & Walled Pink City Markets",
+          "Jaipur University Campus & Ishaan's Signal Array"
+        ]
+      },
+      {
+        num: 2, id: "dausa", name: "DAUSA", label: "Dausa", color: "#2563eb",
+        xPct: 73.5, yPct: 30.0, storyStart: false, rto: "RJ-29",
+        biome: "NH-21 Toll Plazas & Stepwells", act: "Chapters 1–2",
+        quote: '"Whoever controls the toll gates controls who eats in the city."',
+        desc: "The eastern highway bottleneck where Khandelwal's syndicate uses rigged FASTag scanners to seize independent freight haulers.",
+        vehicles: "Ashoka Viking 12-Wheeler • Mahendra Bolera Pik-Up",
+        pois: ["Dausa Highway Toll Checkpoint (Ch. 2 Informant Meet)", "Abhaneri Stepwell Dead-Drop"]
+      },
+      {
+        num: 3, id: "sawai-madhopur", name: "SAWAI MADHOPUR", label: "Sawai Madhopur", color: "#16a34a",
+        xPct: 81.0, yPct: 42.0, storyStart: false, rto: "RJ-25",
+        biome: "Tiger Reserve Forests & Cliff Forts", act: "Chapter 3",
+        quote: '"The forest guards watch the tigers. Nobody watches the men with laser tripods."',
+        desc: "Lush jungle reserves and ancient escarpment forts where wildlife buffer zones are secretly rezoned for the Horizon Corridor.",
+        vehicles: "Surya-Maru Gypsy-King 4WD • Palace-on-Dunes Luxury Train",
+        pois: ["Ranthambore Forest Buffer Zone", "Jungle Ridge Survey Camp"]
+      },
+      {
+        num: 4, id: "kota", name: "KOTA", label: "Kota", color: "#7c3aed",
+        xPct: 74.5, yPct: 55.5, storyStart: false, rto: "RJ-20",
+        biome: "Chambal River, Thermal Plants & Rail Yards", act: "Chapter 4",
+        quote: '"Ninety containers on a midnight freight train, and none of them exist on paper."',
+        desc: "Heavy industrial hub along the Chambal River featuring cooling towers, barrage bridges, and the massive railway marshalling yard.",
+        vehicles: "WAG-12B Electric Freight Train • Plasser Tower Car • Chambal Speedboat",
+        pois: ["Kota Junction Marshalling Yard ('The Freight Switch')", "Chambal River Barrage Bridge"]
+      },
+      {
+        num: 5, id: "bundi", name: "BUNDI", label: "Bundi", color: "#d97706",
+        xPct: 63.5, yPct: 45.5, storyStart: false, rto: "RJ-08",
+        biome: "Aravalli Gorges, Stepwells & Ropeways", act: "Chapter 4",
+        quote: '"Narrow blue lanes where armored SUVs choke and two-wheelers rule."',
+        desc: "Steep hillside palace town connected by aerial cable-cars and tight heritage lanes.",
+        vehicles: "Aravalli Fort Aerial Ropeway • Premier Padmini-Cab",
+        pois: ["Taragarh Hilltop Ropeway ('Ropeway Line')", "Rani Ji Ki Baori Stepwell"]
+      },
+      {
+        num: 6, id: "ajmer", name: "AJMER", label: "Ajmer", color: "#0d9488",
+        xPct: 48.0, yPct: 40.5, storyStart: false, rto: "RJ-01",
+        biome: "Central Mountain Pass & Rail Hub", act: "Chapter 5",
+        quote: '"Every train from Jaipur to Udaipur has to thread the needle at Ajmer."',
+        desc: "Historic valley junction housing the colonial-era Central Land Revenue Registry and high-speed rail terminals.",
+        vehicles: "Vande-Marwar Express • Force Traveller-26 Minibus",
+        pois: ["Central Revenue Archive Vault", "Ana Sagar Lake Causeway"]
+      },
+      {
+        num: 7, id: "pali", name: "PALI", label: "Pali", color: "#0891b2",
+        xPct: 39.5, yPct: 51.5, storyStart: false, rto: "RJ-22",
+        biome: "Industrial Mills & Dry-Port Warehouses", act: "Chapter 6",
+        quote: '"Smoke from the dyeing mills hides the smoke from burned land deeds."',
+        desc: "Factory and container-depot belt linking the southern hills to the western desert.",
+        vehicles: "Eklavya Pro-3015 Cold-Chain • Piaggio-Ape Cargo 3W",
+        pois: ["Pali Inland Container Dry-Port", "Textile Mill Smokestack Complex"]
+      },
+      {
+        num: 8, id: "jodhpur", name: "JODHPUR", label: "Jodhpur", color: "#1d4ed8",
+        xPct: 33.5, yPct: 38.5, storyStart: false, rto: "RJ-19",
+        biome: "Mehrangarh Citadel & Blue City Maze", act: "Chapters 7–8",
+        quote: '"From the fort ramparts you can see the blue houses end and the syndicate roads begin."',
+        desc: "Towering cliff fortress overlooking the Blue City and Mahesh Khandelwal's western command compound.",
+        vehicles: "Mahendra Scorpina-N Carbon • WDP-4D 'Thar Link' Train • Rajputana Bullet 500",
+        pois: ["Mehrangarh Cliff Citadel", "Khandelwal's Western Command Estate"]
+      },
+      {
+        num: 9, id: "jaisalmer", name: "JAISALMER", label: "Jaisalmer", color: "#eab308",
+        xPct: 14.5, yPct: 39.5, storyStart: false, rto: "RJ-15",
+        biome: "Golden Thar Sand Dunes & Desert Fort", act: "Chapters 9–10 Finale",
+        quote: '"Out past Sam Dunes, there are no police, no courts—only tire tracks and wind."',
+        desc: "Deep desert frontier of golden dunes, wind turbines, camel trails, and the final high-speed interception of Vardhan's 8x8 Mobile Command Rig.",
+        vehicles: "Vardhan Mobile Command Rig (8x8) • Gurkha-Force 4x4x4 • Bell-429 Chopper",
+        pois: ["Jaisalmer Golden Fort", "Sam Dunes Restricted Highway ('Command Vehicle')"]
+      },
+      {
+        num: 10, id: "barmer", name: "BARMER", label: "Barmer", color: "#b91c1c",
+        xPct: 22.5, yPct: 56.0, storyStart: false, rto: "RJ-04",
+        biome: "Desert Oil Rigs & Refinery Pipelines", act: "Chapter 8",
+        quote: '"They told the panchayat it was a water pipeline. Then the armed tankers arrived."',
+        desc: "Crude-oil extraction fields and fortified desert pipelines crossing traditional village grazing lands.",
+        vehicles: "Ashoka Petro-Tanker 24KL • Desert-Star Roof-Rider Bus",
+        pois: ["Barmer Oil Extraction Rig #04", "Desert Court Panchayat Terminal"]
+      },
+      {
+        num: 11, id: "udaipur", name: "UDAIPUR", label: "Udaipur", color: "#9333ea",
+        xPct: 40.5, yPct: 78.5, storyStart: false, rto: "RJ-27",
+        biome: "Shimmering Lakes, Palaces & Aravalli Ridges", act: "Prologue Scene 2 & Ch. 6",
+        quote: '"Five-star lake palaces on the water; armed midnight survey crews in the hills."',
+        desc: "Kavya Rathore's home city. Island palaces host Vikram Vardhan's summits while armed teams illegally move village boundary stones in the dark hills.",
+        vehicles: "Shakti Activa-125 (Kavya) • Rajputana Himadri-450 • Pichola Solar Ferry",
+        pois: [
+          "Udaipur Outskirt Rocky Ridge (Prologue Scene 2 Night Stealth)",
+          "Lake Pichola Island Palace ('The Lake Ledger')",
+          "Raghav Rathore's Old City Survey Darkroom"
+        ]
+      },
+      {
+        num: 12, id: "rajsamand", name: "RAJSAMAND", label: "Rajsamand", color: "#059669",
+        xPct: 49.5, yPct: 61.5, storyStart: false, rto: "RJ-30",
+        biome: "White Marble Quarries & Dam Reservoir", act: "Chapter 6",
+        quote: '"Cut deep enough into the marble hills and you find where the missing trucks went."',
+        desc: "Stepped white marble quarries and dam causeways north of Udaipur.",
+        vehicles: "BharatBenz 3528C Quarry Tipper • Mahendra TUV-Battlebox",
+        pois: ["Rajsamand Marble Quarry Pit", "Dam Spillway Roadblock"]
+      },
+      {
+        num: 13, id: "sikar", name: "SIKAR", label: "Sikar", color: "#4f46e5",
+        xPct: 55.5, yPct: 15.0, storyStart: false, rto: "RJ-23",
+        biome: "Shekhawati Havelis & Northern Farm Belt", act: "Chapters 2–3",
+        quote: '"Frescoed mansions bought for pennies through forged agricultural debt."',
+        desc: "Northern gateway of painted heritage havelis and farmer unions staging tractor blockades along NH-52.",
+        vehicles: "Sonalika-Swaraj 855 Farm Tractor • Tara Sumo-Victa",
+        pois: ["Shekhawati Painted Haveli", "NH-52 Farmer Union Blockade"]
+      }
+    ];
+
+    let currentScale = 1;
+    let panX = 0, panY = 0;
+    let isDragging = false, startX = 0, startY = 0;
+
+    function initInteractiveMap() {
+      // 1. Render Pins on Map
+      const pinsLayer = document.getElementById("interactive-pins-layer");
+      pinsLayer.innerHTML = DISTRICTS_DATA.map(d => `
+        <div
+          onclick="openDistrict('${d.id}')"
+          style="left:${d.xPct}%; top:${d.yPct}%;"
+          class="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-20 flex flex-col items-center"
+        >
+          <div class="flex items-center gap-1.5 bg-[#071018]/90 hover:bg-black border border-white/30 group-hover:border-orange-400 px-2 py-0.5 rounded-full shadow-xl transition transform group-hover:scale-110">
+            <span
+              style="background-color:${d.color}; color:#ffffff;"
+              class="relative w-5 h-5 rounded-full flex items-center justify-center font-display text-xs font-bold pin-pulse"
+            >
+              ${d.num}
+            </span>
+            <span class="font-display text-xs font-bold tracking-wider text-white pr-1 whitespace-nowrap">
+              ${d.name}
+            </span>
+          </div>
+          ${d.storyStart ? `
+            <span class="mt-1 px-2 py-0.5 rounded bg-red-600 text-[9px] font-display font-bold tracking-widest text-white uppercase shadow-lg border border-red-300/40">
+              STORY STARTS HERE
+            </span>
+          ` : ''}
+        </div>
+      `).join("");
+
+      // 2. Render Top-Right 13 Districts Index
+      const legendList = document.getElementById("district-legend-list");
+      legendList.innerHTML = DISTRICTS_DATA.map(d => `
+        <button
+          onclick="openDistrict('${d.id}')"
+          class="w-full flex items-center gap-2.5 px-2 py-1 rounded hover:bg-white/10 text-left transition group"
+        >
+          <span
+            style="background-color:${d.color};"
+            class="w-4 h-4 rounded-full flex items-center justify-center font-mono text-[9px] font-bold text-white shrink-0"
+          >
+            ${d.num}
+          </span>
+          <span class="text-xs text-gray-200 group-hover:text-orange-400 truncate">${d.label}</span>
+        </button>
+      `).join("");
+    }
+
+    function openDistrict(id) {
+      const d = DISTRICTS_DATA.find(item => item.id === id);
+      if (!d) return;
+
+      const badge = document.getElementById("drawer-num-badge");
+      badge.textContent = d.num;
+      badge.style.backgroundColor = d.color;
+
+      document.getElementById("drawer-rto").textContent = `DISTRICT #${d.num} // RTO ${d.rto}`;
+      document.getElementById("drawer-title").textContent = d.name;
+      document.getElementById("drawer-quote").textContent = d.quote;
+      document.getElementById("drawer-desc").textContent = d.desc;
+      document.getElementById("drawer-biome").textContent = d.biome;
+      document.getElementById("drawer-act").textContent = d.act;
+      document.getElementById("drawer-vehicles").textContent = d.vehicles;
+
+      document.getElementById("drawer-pois").innerHTML = d.pois.map(p => `
+        <div class="p-2.5 rounded bg-white/[0.04] border border-white/10 text-xs text-gray-200 flex items-center gap-2">
+          <span class="text-orange-400">📍</span>
+          <span>${p}</span>
+        </div>
+      `).join("");
+
+      document.getElementById("district-drawer").classList.remove("translate-x-full");
+
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, "", `/world/${d.id}`);
+      }
+    }
+
+    function closeDrawer() {
+      document.getElementById("district-drawer").classList.add("translate-x-full");
+    }
+
+    function applyTransform() {
+      document.getElementById("map-container").style.transform =
+        `translate(${panX}px, ${panY}px) scale(${currentScale})`;
+    }
+
+    function setZoom(z) {
+      currentScale = Math.min(2.6, Math.max(0.85, z));
+      applyTransform();
+    }
+
+    function resetAtlasView() {
+      currentScale = 1;
+      panX = 0;
+      panY = 0;
+      applyTransform();
+      closeDrawer();
+    }
+
+    // Drag-to-pan & Scroll-to-zoom
+    const stage = document.getElementById("map-stage");
+    stage.addEventListener("mousedown", e => {
+      isDragging = true;
+      startX = e.clientX - panX;
+      startY = e.clientY - panY;
+    });
+    window.addEventListener("mousemove", e => {
+      if (!isDragging) return;
+      panX = e.clientX - startX;
+      panY = e.clientY - startY;
+      applyTransform();
+    });
+    window.addEventListener("mouseup", () => { isDragging = false; });
+    stage.addEventListener("wheel", e => {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 0.12 : -0.12;
+      setZoom(currentScale + delta);
+    }, { passive: false });
+
+    // Handle initial route if /world/district
+    const path = window.location.pathname.toLowerCase();
+    const parts = path.split("/").filter(Boolean);
+    const initialId = (parts.length >= 2 && parts[0] === "world") ? parts[1] : "jaipur";
+
+    initInteractiveMap();
+    if (initialId) {
+      openDistrict(initialId);
+    }
+  </script>
+</body>
+</html>
